@@ -1,5 +1,5 @@
-# Payfull-Opencart
-This is an open-source OpenCart Payfull extension (3.X)
+# BKMExpress - Opencart3.x
+This is an open-source OpenCart BKMExpress extension (3.X)
 
 For more info: 
-Payfull.com
+BKMExpress.com
