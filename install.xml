@@ -25,10 +25,10 @@
         <operation>
             <search><![CDATA[if ($this->user->hasPermission('access', 'sale/order')) {]]></search>
             <add position="before"><![CDATA[
-                 if ($this->user->hasPermission('access', 'extension/sale/bkmexpress')) {
+                 if ($this->user->hasPermission('access', 'sale/bkmexpress')) {
                     $sale[] = array(
                         'name'	   => $this->language->get('text_bkmexpress_history'),
-                        'href'     => $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'], true),
+                        'href'     => $this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'], true),
                         'children' => array()
                     );
                 }

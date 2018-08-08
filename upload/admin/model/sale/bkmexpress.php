@@ -1,6 +1,6 @@
 <?php
 
-class ModelExtensionSaleBkmexpress extends Model {
+class ModelSaleBkmexpress extends Model {
 	
 	public function deleteBkmexpress($bkmexpress_order_id){
 		$this->db->query('delete from `'.DB_PREFIX.'bkmexpress_order` WHERE bkmexpress_order_id="'.$bkmexpress_order_id.'"');

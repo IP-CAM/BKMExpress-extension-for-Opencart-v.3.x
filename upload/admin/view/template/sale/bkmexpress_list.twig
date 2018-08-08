@@ -2,7 +2,7 @@
 <div id="content">
     <div class="page-header">
         <div class="container-fluid">
-            <div class="pull-right"><a href="{{ cancel }}" class="btn btn-default"><i class="fa fa-reply"></i> {{ button_cancel }}</a></div>
+            <div class="pull-right"><a href="{{ delete }}" class="btn btn-default"><i class="fa fa-reply"></i> {{ button_delete }}</a></div>
             <h1>{{ heading_title }}</h1>
             <ul class="breadcrumb">
                 {% for breadcrumb in breadcrumbs %}
@@ -13,19 +13,18 @@
     </div>
     <div class="container-fluid">
         {% if error_warning %}
-            <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?>
+            <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
         {% endif %}
-        <?php if ($success) { ?>
         {% if success %}
-            <div class="alert alert-success"><i class="fa fa-check-circle"></i> <?php echo $success; ?>
+            <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
         {% endif %}
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-list"></i> <?php echo $text_list; ?></h3>
+                <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
             </div>
             <div class="panel-body">
                 <div class="well">
@@ -34,54 +33,54 @@
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label"
-                                       for="input-transaction-id"><?php echo $entry_transaction_id; ?></label>
+                                       for="input-transaction-id">{{ entry_transaction_id }}</label>
                                 <input type="text" name="filter_transaction_id"
-                                       value="<?php echo $filter_transaction_id; ?>"
-                                       placeholder="<?php echo $entry_transaction_id; ?>" id="input-transaction-id"
+                                       value="{{ filter_transaction_id }}"
+                                       placeholder="{{ entry_transaction_id }}" id="input-transaction-id"
                                        class="form-control"/>
                             </div>
                             <div class="form-group">
-                                <label class="control-label" for="input-order-id"><?php echo $entry_order_id; ?></label>
-                                <input type="text" name="filter_order_id" value="<?php echo $filter_order_id; ?>"
-                                       placeholder="<?php echo $entry_order_id; ?>" id="input-order-id"
+                                <label class="control-label" for="input-order-id">{{ entry_order_id }}</label>
+                                <input type="text" name="filter_order_id" value="{{ filter_order_id }}"
+                                       placeholder="{{ entry_order_id }}" id="input-order-id"
                                        class="form-control"/>
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label"
-                                       for="input-date-added"><?php echo $entry_date_added; ?></label>
+                                       for="input-date-added">{{ entry_date_added }}</label>
                                 <div class="input-group date">
                                     <input type="text" name="filter_date_added"
-                                           value="<?php echo $filter_date_added; ?>"
-                                           placeholder="<?php echo $entry_date_added; ?>" data-date-format="YYYY-MM-DD"
+                                           value="{{ filter_date_added }}"
+                                           placeholder="{{ entry_date_added }}" data-date-format="YYYY-MM-DD"
                                            id="input-date-added" class="form-control"/>
                                     <span class="input-group-btn">
                   <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
                   </span></div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label" for="input-status"><?php echo $entry_status; ?></label>
+                                <label class="control-label" for="input-status">{{ entry_status }}</label>
                                 <select name="filter_status" id="input-status" class="form-control">
                                     <option value="*"></option>
                                     <?php if ($filter_status) { ?>
-                                    <option value="1" selected="selected"><?php echo $text_complete; ?></option>
+                                    <option value="1" selected="selected">{{ text_complete }}</option>
                                     <?php } else { ?>
-                                    <option value="1"><?php echo $text_complete; ?></option>
+                                    <option value="1">{{ text_complete }}</option>
                                     <?php } ?>
                                     <?php if (!$filter_status && !is_null($filter_status)) { ?>
-                                    <option value="0" selected="selected"><?php echo $text_failed; ?></option>
+                                    <option value="0" selected="selected">{{ text_failed }}</option>
                                     <?php } else { ?>
-                                    <option value="0"><?php echo $text_failed; ?></option>
+                                    <option value="0">{{ text_failed }}</option>
                                     <?php } ?>
                                 </select>
                             </div>
                             <button type="button" id="button-filter" class="btn btn-primary pull-right"><i
-                                        class="fa fa-search"></i> <?php echo $button_filter; ?></button>
+                                        class="fa fa-search"></i> {{ button_filter }}</button>
                         </div>
                     </div>
                 </div>
-                <form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form-transaction">
+                <form action="{{ delete }}" method="post" enctype="multipart/form-data" id="form-transaction">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
                             <thead>
@@ -91,64 +90,64 @@
                                 </td>
 
                                 <!--<td class="text-right"><?php if ($sort == 'po.bkmexpress_order_id') { ?>
-                                  <a href="<?php echo $sort_bkmexpress_order_id; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_bkmexpress_order_id; ?></a>
+                                  <a href="{{ sort_bkmexpress_order_id }}" class="<?php echo strtolower($order) }}">{{ column_bkmexpress_order_id }}</a>
                                   <?php } else { ?>
-                                  <a href="<?php echo $sort_bkmexpress_order_id; ?>"><?php echo $column_bkmexpress_order_id; ?></a>
+                                  <a href="{{ sort_bkmexpress_order_id }}">{{ column_bkmexpress_order_id }}</a>
                                   <?php } ?></td>-->
 
                                 <td class="text-right"><?php if ($sort == 'po.order_id') { ?>
-                                    <a href="<?php echo $sort_order_id; ?>"
-                                       class="<?php echo strtolower($order); ?>"><?php echo $column_order_id; ?></a>
+                                    <a href="{{ sort_order_id }}"
+                                       class="<?php echo strtolower($order) }}">{{ column_order_id }}</a>
                                     <?php } else { ?>
-                                    <a href="<?php echo $sort_order_id; ?>"><?php echo $column_order_id; ?></a>
+                                    <a href="{{ sort_order_id }}">{{ column_order_id }}</a>
                                     <?php } ?></td>
 
                                 <td class="text-right"><?php if ($sort == 'po.transaction_id') { ?>
-                                    <a href="<?php echo $sort_transaction_id; ?>"
-                                       class="<?php echo strtolower($order); ?>"><?php echo $column_transaction_id; ?></a>
+                                    <a href="{{ sort_transaction_id }}"
+                                       class="<?php echo strtolower($order) }}">{{ column_transaction_id }}</a>
                                     <?php } else { ?>
-                                    <a href="<?php echo $sort_transaction_id; ?>"><?php echo $column_transaction_id; ?></a>
+                                    <a href="{{ sort_transaction_id }}">{{ column_transaction_id }}</a>
                                     <?php } ?></td>
 
                                 <td class="text-right"><?php if ($sort == 'o.total') { ?>
-                                    <a href="<?php echo $sort_total; ?>"
-                                       class="<?php echo strtolower($order); ?>"><?php echo $column_total; ?></a>
+                                    <a href="{{ sort_total }}"
+                                       class="<?php echo strtolower($order) }}">{{ column_total }}</a>
                                     <?php } else { ?>
-                                    <a href="<?php echo $sort_total; ?>"><?php echo $column_total; ?></a>
+                                    <a href="{{ sort_total }}">{{ column_total }}</a>
                                     <?php } ?></td>
 
                                 <td class="text-right"><?php if ($sort == 'po.try_total') { ?>
-                                    <a href="<?php echo $sort_try_total; ?>"
-                                       class="<?php echo strtolower($order); ?>"><?php echo $column_try_total; ?></a>
+                                    <a href="{{ sort_try_total }}"
+                                       class="<?php echo strtolower($order) }}">{{ column_try_total }}</a>
                                     <?php } else { ?>
-                                    <a href="<?php echo $sort_try_total; ?>"><?php echo $column_try_total; ?></a>
+                                    <a href="{{ sort_try_total }}">{{ column_try_total }}</a>
                                     <?php } ?></td>
 
                                 <td class="text-right"><?php if ($sort == 'po.conversion_rate') { ?>
-                                    <a href="<?php echo $sort_conversion_rate; ?>"
-                                       class="<?php echo strtolower($order); ?>"><?php echo $column_conversion_rate; ?></a>
+                                    <a href="{{ sort_conversion_rate }}"
+                                       class="<?php echo strtolower($order) }}">{{ column_conversion_rate }}</a>
                                     <?php } else { ?>
-                                    <a href="<?php echo $sort_conversion_rate; ?>"><?php echo $column_conversion_rate; ?></a>
+                                    <a href="{{ sort_conversion_rate }}">{{ column_conversion_rate }}</a>
                                     <?php } ?></td>
 
                                 <td class="text-right"><?php if ($sort == 'po.client_ip') { ?>
-                                    <a href="<?php echo $sort_client_ip; ?>"
-                                       class="<?php echo strtolower($order); ?>"><?php echo $column_client_ip; ?></a>
+                                    <a href="{{ sort_client_ip }}"
+                                       class="<?php echo strtolower($order) }}">{{ column_client_ip }}</a>
                                     <?php } else { ?>
-                                    <a href="<?php echo $sort_client_ip; ?>"><?php echo $column_client_ip; ?></a>
+                                    <a href="{{ sort_client_ip }}">{{ column_client_ip }}</a>
                                     <?php } ?></td>
 
                                 <td class="text-left"><?php if ($sort == 'po.status') { ?>
-                                    <a href="<?php echo $sort_status; ?>"
-                                       class="<?php echo strtolower($order); ?>"><?php echo $column_status; ?></a>
+                                    <a href="{{ sort_status }}"
+                                       class="<?php echo strtolower($order) }}">{{ column_status }}</a>
                                     <?php } else { ?>
-                                    <a href="<?php echo $sort_status; ?>"><?php echo $column_status; ?></a>
+                                    <a href="{{ sort_status }}">{{ column_status }}</a>
                                     <?php } ?></td>
                                 <td class="text-left"><?php if ($sort == 'po.date_added') { ?>
-                                    <a href="<?php echo $sort_date_added; ?>"
-                                       class="<?php echo strtolower($order); ?>"><?php echo $column_date_added; ?></a>
+                                    <a href="{{ sort_date_added }}"
+                                       class="<?php echo strtolower($order) }}">{{ column_date_added }}</a>
                                     <?php } else { ?>
-                                    <a href="<?php echo $sort_date_added; ?>"><?php echo $column_date_added; ?></a>
+                                    <a href="{{ sort_date_added }}">{{ column_date_added }}</a>
                                     <?php } ?></td>
                             </tr>
                             </thead>
@@ -158,26 +157,26 @@
                             <tr>
                                 <td class="text-center"><?php if (in_array($transaction['bkmexpress_order_id'], $selected)) { ?>
                                     <input type="checkbox" name="selected[]"
-                                           value="<?php echo $transaction['bkmexpress_order_id']; ?>"
+                                           value="{{ transaction['bkmexpress_order_id'] }}"
                                            checked="checked"/>
                                     <?php } else { ?>
                                     <input type="checkbox" name="selected[]"
-                                           value="<?php echo $transaction['bkmexpress_order_id']; ?>"/>
+                                           value="{{ transaction['bkmexpress_order_id'] }}"/>
                                     <?php } ?></td>
 
-                                <td class="text-right"><?php echo $transaction['order_id']; ?></td>
-                                <td class="text-right"><?php echo $transaction['transaction_id']; ?></td>
-                                <td class="text-right"><?php echo $transaction['total']; ?></td>
-                                <td class="text-right"><?php echo $transaction['try_total']; ?></td>
-                                <td class="text-right"><?php echo $transaction['conversion_rate']; ?></td>
-                                <td class="text-right"><?php echo $transaction['client_ip']; ?></td>
-                                <td class="text-left"><?php echo $transaction['status']; ?></td>
-                                <td class="text-left"><?php echo $transaction['date_added']; ?></td>
+                                <td class="text-right">{{ transaction['order_id'] }}</td>
+                                <td class="text-right">{{ transaction['transaction_id'] }}</td>
+                                <td class="text-right">{{ transaction['total'] }}</td>
+                                <td class="text-right">{{ transaction['try_total'] }}</td>
+                                <td class="text-right">{{ transaction['conversion_rate'] }}</td>
+                                <td class="text-right">{{ transaction['client_ip'] }}</td>
+                                <td class="text-left">{{ transaction['status'] }}</td>
+                                <td class="text-left">{{ transaction['date_added'] }}</td>
                             </tr>
                             <?php } ?>
                             <?php } else { ?>
                             <tr>
-                                <td class="text-center" colspan="13"><?php echo $text_no_results; ?></td>
+                                <td class="text-center" colspan="13">{{ text_no_results }}</td>
                             </tr>
                             <?php } ?>
                             </tbody>
@@ -185,15 +184,15 @@
                     </div>
                 </form>
                 <div class="row">
-                    <div class="col-sm-6 text-left"><?php echo $pagination; ?></div>
-                    <div class="col-sm-6 text-right"><?php echo $results; ?></div>
+                    <div class="col-sm-6 text-left">{{ pagination }}</div>
+                    <div class="col-sm-6 text-right">{{ results }}</div>
                 </div>
             </div>
         </div>
     </div>
     <script type="text/javascript"><!--
         $('#button-filter').on('click', function () {
-            url = 'index.php?route=extension/sale/bkmexpress&user_token=<?php echo $user_token; ?>';
+            url = 'index.php?route=sale/bkmexpress&user_token={{ user_token }}';
 
             var filter_order_id = $('input[name=\'filter_order_id\']').val();
 
