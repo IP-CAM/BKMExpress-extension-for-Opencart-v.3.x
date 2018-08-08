@@ -23,7 +23,7 @@
     </file>
     <file path="admin/controller/common/column_left.php">
         <operation>
-            <search><![CDATA[if ($this->user->hasPermission('access', 'extension/sale/order')) {]]></search>
+            <search><![CDATA[if ($this->user->hasPermission('access', 'sale/order')) {]]></search>
             <add position="before"><![CDATA[
                  if ($this->user->hasPermission('access', 'extension/sale/bkmexpress')) {
                     $sale[] = array(
