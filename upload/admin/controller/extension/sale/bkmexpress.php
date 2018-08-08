@@ -3,16 +3,16 @@ class ControllerSaleBkmexpress extends Controller {
     private $error = array();
 
     public function index() {
-        $this->load->language('sale/bkmexpress');
+        $this->load->language('extension/sale/bkmexpress');
         $this->document->setTitle($this->language->get('heading_title'));
-        $this->load->model('sale/bkmexpress');
+        $this->load->model('extension/sale/bkmexpress');
         $this->getList();
     }
 
     public function delete() {
-        $this->load->language('sale/bkmexpress');
+        $this->load->language('extension/sale/bkmexpress');
         $this->document->setTitle($this->language->get('heading_title'));
-        $this->load->model('sale/bkmexpress');
+        $this->load->model('extension/sale/bkmexpress');
 
         if (isset($this->request->post['selected']) && $this->validateDelete()) {
             foreach ($this->request->post['selected'] as $bkmexpress_order_id) {
@@ -59,7 +59,7 @@ class ControllerSaleBkmexpress extends Controller {
                 $url .= '&page=' . $this->request->get['page'];
             }
 
-            $this->response->redirect($this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL'));
+            $this->response->redirect($this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL'));
         }
 
         $this->getList();
@@ -168,10 +168,10 @@ class ControllerSaleBkmexpress extends Controller {
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('heading_title'),
-            'href' => $this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL')
+            'href' => $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL')
         );
 
-        $data['delete'] = $this->url->link('sale/bkmexpress/delete', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL');
+        $data['delete'] = $this->url->link('extension/sale/bkmexpress/delete', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL');
 
         $data['transactions'] = array();
 
@@ -301,23 +301,23 @@ class ControllerSaleBkmexpress extends Controller {
             $url .= '&page=' . $this->request->get['page'];
         }
 
-        $data['sort_bkmexpress_order_id'] = $this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.bkmexpress_order_id' . $url, 'SSL');
+        $data['sort_bkmexpress_order_id'] = $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.bkmexpress_order_id' . $url, 'SSL');
 
-        $data['sort_order_id'] = $this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.order_id' . $url, 'SSL');
+        $data['sort_order_id'] = $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.order_id' . $url, 'SSL');
 
-        $data['sort_transaction_id'] = $this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.transaction_id' . $url, 'SSL');
+        $data['sort_transaction_id'] = $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.transaction_id' . $url, 'SSL');
 
-        $data['sort_total'] = $this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=o.total' . $url, 'SSL');
+        $data['sort_total'] = $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=o.total' . $url, 'SSL');
 
-        $data['sort_try_total'] = $this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.try_total' . $url, 'SSL');
+        $data['sort_try_total'] = $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.try_total' . $url, 'SSL');
 
-        $data['sort_conversion_rate'] = $this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.conversion_rate' . $url, 'SSL');
+        $data['sort_conversion_rate'] = $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.conversion_rate' . $url, 'SSL');
 
-        $data['sort_date_added'] = $this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.date_added' . $url, 'SSL');
+        $data['sort_date_added'] = $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.date_added' . $url, 'SSL');
 
-        $data['sort_status'] = $this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.status' . $url, 'SSL');
+        $data['sort_status'] = $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.status' . $url, 'SSL');
 
-        $data['sort_client_ip'] = $this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.client_ip' . $url, 'SSL');
+        $data['sort_client_ip'] = $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . '&sort=po.client_ip' . $url, 'SSL');
 
         $url = '';
 
@@ -358,7 +358,7 @@ class ControllerSaleBkmexpress extends Controller {
         $pagination->total = $bkmexpress_total;
         $pagination->page = $page;
         $pagination->limit = $this->config->get('config_limit_admin');
-        $pagination->url = $this->url->link('sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . $url . '&page={page}', 'SSL');
+        $pagination->url = $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'] . $url . '&page={page}', 'SSL');
 
         $data['pagination'] = $pagination->render();
 
@@ -382,7 +382,7 @@ class ControllerSaleBkmexpress extends Controller {
     }
 
     protected function validateDelete() {
-        if (!$this->user->hasPermission('modify', 'sale/bkmexpress')) {
+        if (!$this->user->hasPermission('modify', 'extension/sale/bkmexpress')) {
             $this->error['warning'] = $this->language->get('error_permission');
         }
 
