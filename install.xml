@@ -23,12 +23,12 @@
     </file>
     <file path="admin/controller/common/column_left.php">
         <operation>
-            <search><![CDATA[if ($this->user->hasPermission('access', 'sale/order')) {]]></search>
+            <search><![CDATA[if ($this->user->hasPermission('access', 'extension/sale/order')) {]]></search>
             <add position="before"><![CDATA[
-                 if ($this->user->hasPermission('access', 'sale/bkmexpress')) {
+                 if ($this->user->hasPermission('access', 'extension/sale/bkmexpress')) {
                     $sale[] = array(
                         'name'	   => $this->language->get('text_bkmexpress_history'),
-                        'href'     => $this->url->link('sale/bkmexpress', 'token=' . $this->session->data['token'], true),
+                        'href'     => $this->url->link('extension/sale/bkmexpress', 'user_token=' . $this->session->data['user_token'], true),
                         'children' => array()
                     );
                 }
