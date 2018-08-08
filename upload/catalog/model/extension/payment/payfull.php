@@ -1,6 +1,6 @@
 <?php
 
-class ModelExtensionPaymentPayfull extends Model {
+class ModelExtensionPaymentBkmexpress extends Model {
 
 	public function getInstallments(){
 		$params = array(
@@ -26,7 +26,7 @@ class ModelExtensionPaymentPayfull extends Model {
 	}
 
 	public function getOneShotTotal($total){
-        if($this->config->get('payfull_installment_commission')){
+        if($this->config->get('bkmexpress_installment_commission')){
             $oneShotCommission 	= json_decode($this->getOneShotCommission(), true);
         }else{
             $oneShotCommission 	= 0;
@@ -40,7 +40,7 @@ class ModelExtensionPaymentPayfull extends Model {
 
 	public function getExtraInstallments(){
 
-        $extraInstallmentsStatus = $this->config->get('payfull_extra_installment_status');
+        $extraInstallmentsStatus = $this->config->get('bkmexpress_extra_installment_status');
         if(!$extraInstallmentsStatus){
             return json_encode([]);
         }
@@ -79,7 +79,7 @@ class ModelExtensionPaymentPayfull extends Model {
 	public function saveResponse($data){
 	    if(!isset($data['transaction_id'])) return;
 
-		$sql = "insert into `".DB_PREFIX."payfull_order` SET 
+		$sql = "insert into `".DB_PREFIX."bkmexpress_order` SET 
 		  `order_id` = '".$data['passive_data']."',
 		  `transaction_id` = '".$data['transaction_id']."',
 		  `bank_id` = '".$data['bank_id']."',
@@ -114,10 +114,10 @@ class ModelExtensionPaymentPayfull extends Model {
 		}
 
 
-        $force3D = $this->config->get('payfull_force_3dsecure_status');
+        $force3D = $this->config->get('bkmexpress_force_3dsecure_status');
         $use3d  = ($force3D)?1:$use3d;
 
-        if($this->config->get('payfull_force_3dsecure_debit')){
+        if($this->config->get('bkmexpress_force_3dsecure_debit')){
             $cardInfo = $this->get_card_info();
             $cardInfo = json_decode($cardInfo, true);
 
@@ -136,7 +136,7 @@ class ModelExtensionPaymentPayfull extends Model {
 				"language"        => 'tr',
 				"client_ip"       => $_SERVER['REMOTE_ADDR'],
 				"payment_title"   => 'Order #'.$order_info['order_id'],
-				"return_url"      => $this->url->link('extension/payment/payfull/callback','',true),
+				"return_url"      => $this->url->link('extension/payment/bkmexpress/callback','',true),
 				"bank_id"         => 'BKMExpress',
 
 				"customer_firstname" => $order_info['firstname'],
@@ -161,7 +161,7 @@ class ModelExtensionPaymentPayfull extends Model {
 				"client_ip"       => $_SERVER['REMOTE_ADDR'],
 				"payment_title"   => 'Order #'.$order_info['order_id'],
 				"use3d"           => $use3d,
-				"return_url"      => $this->url->link('extension/payment/payfull/callback','',true),
+				"return_url"      => $this->url->link('extension/payment/bkmexpress/callback','',true),
 
 				"customer_firstname" => $order_info['firstname'],
 				"customer_lastname"  => $order_info['lastname'],
@@ -177,7 +177,7 @@ class ModelExtensionPaymentPayfull extends Model {
 		}elseif(!$bkmExist){
 			$params["installments"] = 1;			
 		}else{
-			$params["installments"] = ($this->config->get('payfull_installment_status'))?1:0;
+			$params["installments"] = ($this->config->get('bkmexpress_installment_status'))?1:0;
 		}
 		    
 		if(isset($this->session->data['bank_id']) AND $params["installments"] > 1){
@@ -192,7 +192,7 @@ class ModelExtensionPaymentPayfull extends Model {
 			$params["campaign_id"] = $this->request->post['campaign_id'];//campaign_id for extra installments
 		}
 
-        if($this->config->get('payfull_installment_commission')){
+        if($this->config->get('bkmexpress_installment_commission')){
 		    if(isset($this->session->data['installments'])){
                 $installmentsArr = $this->session->data['installments'];
             }else{
@@ -216,11 +216,11 @@ class ModelExtensionPaymentPayfull extends Model {
 
 	public function call($params){
 
-		$merchantPassword = $this->config->get('payfull_password');
+		$merchantPassword = $this->config->get('bkmexpress_password');
 
-		$params["merchant"] = $this->config->get('payfull_username');
+		$params["merchant"] = $this->config->get('bkmexpress_username');
 
-		$api_url = $this->config->get('payfull_endpoint');
+		$api_url = $this->config->get('bkmexpress_endpoint');
 
 		//begin HASH calculation
 		ksort($params);
@@ -251,13 +251,13 @@ class ModelExtensionPaymentPayfull extends Model {
 	}
 
 	public function getMethod($address, $total) {
-		$this->load->language('extension/payment/payfull');
+		$this->load->language('extension/payment/bkmexpress');
 
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$this->config->get('cod_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
 
-		if ($this->config->get('payfull_total') > 0 && $this->config->get('payfull_total') > $total) {
+		if ($this->config->get('bkmexpress_total') > 0 && $this->config->get('bkmexpress_total') > $total) {
 			$status = false;
-		} elseif (!$this->config->get('payfull_geo_zone_id')) {
+		} elseif (!$this->config->get('bkmexpress_geo_zone_id')) {
 			$status = true;
 		} elseif ($query->num_rows) {
 			$status = true;
@@ -270,10 +270,10 @@ class ModelExtensionPaymentPayfull extends Model {
 
 		if ($status) {
 			$method_data = array(
-				'code'       => 'payfull',
-				'title'      => $this->language->get('text_payfull'),
+				'code'       => 'bkmexpress',
+				'title'      => $this->language->get('text_bkmexpress'),
 				'terms'      => '',
-				'sort_order' => $this->config->get('payfull_sort_order')
+				'sort_order' => $this->config->get('bkmexpress_sort_order')
 			);
 		}
 

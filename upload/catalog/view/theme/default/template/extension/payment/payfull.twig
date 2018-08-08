@@ -1,14 +1,14 @@
 <form class="form-horizontal">
     <fieldset id="payment">
 
-        {%  if payfull_bkm_status %}
+        {%  if bkmexpress_bkm_status %}
         <ul class="tab">
-            <li><a href="javascript:void(0)" class="tablinks active" onclick="openPaymentMethod(event, 'cardPaymentMethod')"><?php echo $text_credit_card; ?><img class="payfullImage" src="{{ payfull_banks_images }}payfull-logo.png"></a></li>
-            <li><a href="javascript:void(0)" class="tablinks bkmTab" onclick="openPaymentMethod(event, 'bkmPaymentMethod')"><img class="bkmImage" src="{{ payfull_banks_images }}BKM.png"></a></li>
+            <li><a href="javascript:void(0)" class="tablinks active" onclick="openPaymentMethod(event, 'cardPaymentMethod')"><?php echo $text_credit_card; ?><img class="bkmexpressImage" src="{{ bkmexpress_banks_images }}bkmexpress-logo.png"></a></li>
+            <li><a href="javascript:void(0)" class="tablinks bkmTab" onclick="openPaymentMethod(event, 'bkmPaymentMethod')"><img class="bkmImage" src="{{ bkmexpress_banks_images }}BKM.png"></a></li>
         </ul>
         <div class="tabcontent" id="cardPaymentMethod" style="display: block;">
         {% else %}
-            <legend> {{ text_credit_card }} <img src=" {{ payfull_logo }}"></legend>
+            <legend> {{ text_credit_card }} <img src=" {{ bkmexpress_logo }}"></legend>
         {% endif %}
 
         <div class="form-group required">
@@ -58,11 +58,11 @@
                 <div id="installment_table_id">
                     <div class="installmet_head">
                         <div class="install_head_label add_space">
-                            <img style="display: none" class="bank_photo" data-src=" {{ payfull_banks_images }}" src="">
+                            <img style="display: none" class="bank_photo" data-src=" {{ bkmexpress_banks_images }}" src="">
                         </div>
-                        <div class="install_head_label"> {{ entry_payfull_installmet }}</div>
-                        <div class="install_head_label"> {{ entry_payfull_amount }}</div>
-                        <div class="install_head_label"> {{ entry_payfull_total }}</div>
+                        <div class="install_head_label"> {{ entry_bkmexpress_installmet }}</div>
+                        <div class="install_head_label"> {{ entry_bkmexpress_amount }}</div>
+                        <div class="install_head_label"> {{ entry_bkmexpress_total }}</div>
                     </div>
                     <div class="installment_body" id="installment_body">
                         <div class="installment_row">
@@ -89,7 +89,7 @@
             </div>
         </div>
 
-        {% if payfull_force_3dsecure_status %}
+        {% if bkmexpress_force_3dsecure_status %}
         <div class="form-group use-3d-wrapper">
             <div class="col-sm-10 col-sm-offset-2">
                 <div class="checkbox">
@@ -99,7 +99,7 @@
                 </div>
             </div>
         </div>
-        {% elseif payfull_3dsecure_status %}
+        {% elseif bkmexpress_3dsecure_status %}
         <div class="form-group use-3d-wrapper">
             <div class="col-sm-10 col-sm-offset-2">
                 <div class="checkbox">
@@ -111,7 +111,7 @@
         {% endif %}
 
         </div>
-        {%  if payfull_bkm_status %}
+        {%  if bkmexpress_bkm_status %}
         <div class="tabcontent" id="bkmPaymentMethod">
             <p> {{ text_bkm_explanation }}</p>
             <input id="useBKM" name="useBKM" type="hidden" value="0" />
@@ -162,7 +162,7 @@
 
     confirmButton.bind('click', function () {
         $.ajax({
-            url: 'index.php?route=extension/payment/payfull/send',
+            url: 'index.php?route=extension/payment/bkmexpress/send',
             type: 'post',
             data: $('#payment select, #payment input[type="text"], #payment input[type="hidden"], #payment input[type="checkbox"]:checked, #payment input[type="radio"]:checked'),
             dataType: 'json',
@@ -256,7 +256,7 @@
 
     function refreshInstallmentOptions() {
         $.ajax({
-            url: 'index.php?route=extension/payment/payfull/get_card_info',
+            url: 'index.php?route=extension/payment/bkmexpress/get_card_info',
             type: 'post',
             data: $('#payment :input'),
             dataType: 'json',
@@ -321,7 +321,7 @@
                 }
 
 
-                {% if payfull_force_3dsecure_debit %}
+                {% if bkmexpress_force_3dsecure_debit %}
                     if (
                         json['card_type'] != 'CREDIT' &&
                         $('#use3d').attr('data-forced') == 'false'
@@ -373,7 +373,7 @@
     var containerSelectorInst = $('.extra_installments_select');
 
     $.ajax({
-      url: 'index.php?route=extension/payment/payfull/get_extra_installments&inst='+selectedInstallmentCount+'&bank='+selectedInstallmentBank,
+      url: 'index.php?route=extension/payment/bkmexpress/get_extra_installments&inst='+selectedInstallmentCount+'&bank='+selectedInstallmentBank,
       type: 'post',
       data: $('#payment :input'),
       dataType: 'json',

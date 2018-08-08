@@ -1,18 +1,18 @@
 <?php
 
-class ModelSalePayfull extends Model {
+class ModelSaleBkmexpress extends Model {
 	
-	public function deletePayfull($payfull_order_id){
-		$this->db->query('delete from `'.DB_PREFIX.'payfull_order` WHERE payfull_order_id="'.$payfull_order_id.'"');
+	public function deleteBkmexpress($bkmexpress_order_id){
+		$this->db->query('delete from `'.DB_PREFIX.'bkmexpress_order` WHERE bkmexpress_order_id="'.$bkmexpress_order_id.'"');
 	}
 
-	public function getTotalPayfulls($data = array()){
-		$sql = "SELECT count(po.payfull_order_id) as total from `".DB_PREFIX."payfull_order` po inner join `".DB_PREFIX."order` o on o.order_id = po.order_id";
+	public function getTotalBkmexpresss($data = array()){
+		$sql = "SELECT count(po.bkmexpress_order_id) as total from `".DB_PREFIX."bkmexpress_order` po inner join `".DB_PREFIX."order` o on o.order_id = po.order_id";
 
 		$implode = array();
 
-		if (isset($data['filter_payfull_order_id'])) {
-			$implode[] = 'po.payfull_order_id="' . $data['filter_payfull_order_id'].'"';
+		if (isset($data['filter_bkmexpress_order_id'])) {
+			$implode[] = 'po.bkmexpress_order_id="' . $data['filter_bkmexpress_order_id'].'"';
 		}
 
 		if (isset($data['filter_order_id'])) {
@@ -23,24 +23,12 @@ class ModelSalePayfull extends Model {
 			$implode[] = 'po.transaction_id="' . $data['filter_transaction_id'].'"';
 		}
 
-		if (isset($data['filter_bank_id'])) {
-			$implode[] = 'po.bank_id="' . $data['filter_bank_id'].'"';
-		}
-
 		if (isset($data['filter_status'])) {
 			$implode[] = 'po.status="' . $data['filter_status'].'"';
 		}
 
-		if (isset($data['filter_use3d'])) {
-			$implode[] = 'po.use3d="' . $data['filter_use3d'].'"';
-		}
-
 		if (isset($data['filter_client_ip'])) {
 			$implode[] = 'po.client_ip="' . $data['filter_client_ip'].'"';
-		}
-		
-		if (isset($data['filter_installments'])) {
-			$implode[] = 'po.installments="' . $data['filter_installments'].'"';
 		}
 
 		if (isset($data['filter_date_added'])) {
@@ -58,13 +46,13 @@ class ModelSalePayfull extends Model {
 		}
 	}
 
-	public function getPayfulls($data = array()){
-		$sql = "SELECT po.*, o.total from `".DB_PREFIX."payfull_order` po inner join `".DB_PREFIX."order` o on o.order_id = po.order_id";
+	public function getBkmexpresss($data = array()){
+		$sql = "SELECT po.*, o.total from `".DB_PREFIX."bkmexpress_order` po inner join `".DB_PREFIX."order` o on o.order_id = po.order_id";
 
 		$implode = array();
 
-		if (isset($data['filter_payfull_order_id'])) {
-			$implode[] = 'po.payfull_order_id="' . $data['filter_payfull_order_id'].'"';
+		if (isset($data['filter_bkmexpress_order_id'])) {
+			$implode[] = 'po.bkmexpress_order_id="' . $data['filter_bkmexpress_order_id'].'"';
 		}
 
 		if (isset($data['filter_order_id'])) {
@@ -75,24 +63,12 @@ class ModelSalePayfull extends Model {
 			$implode[] = 'po.transaction_id="' . $data['filter_transaction_id'].'"';
 		}
 
-		if (isset($data['filter_bank_id'])) {
-			$implode[] = 'po.bank_id="' . $data['filter_bank_id'].'"';
-		}
-
 		if (isset($data['filter_status'])) {
 			$implode[] = 'po.status="' . $data['filter_status'].'"';
 		}
 
-		if (isset($data['filter_use3d'])) {
-			$implode[] = 'po.use3d="' . $data['filter_use3d'].'"';
-		}
-
 		if (isset($data['filter_client_ip'])) {
 			$implode[] = 'po.client_ip="' . $data['filter_client_ip'].'"';
-		}
-		
-		if (isset($data['filter_installments'])) {
-			$implode[] = 'po.installments="' . $data['filter_installments'].'"';
 		}
 
 		if (isset($data['filter_date_added'])) {

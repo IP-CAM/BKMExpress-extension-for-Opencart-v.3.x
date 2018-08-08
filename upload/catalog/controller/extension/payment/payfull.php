@@ -1,13 +1,13 @@
 <?php
-class ControllerExtensionPaymentPayfull extends Controller {
+class ControllerExtensionPaymentBkmexpress extends Controller {
 
 	public function index() {
 
-		$this->language->load('extension/payment/payfull');
+		$this->language->load('extension/payment/bkmexpress');
 
-		$data['entry_payfull_installmet'] 	= $this->language->get('entry_payfull_installmet');
-		$data['entry_payfull_amount'] 		= $this->language->get('entry_payfull_amount');
-		$data['entry_payfull_total'] 		= $this->language->get('entry_payfull_total');
+		$data['entry_bkmexpress_installmet'] 	= $this->language->get('entry_bkmexpress_installmet');
+		$data['entry_bkmexpress_amount'] 		= $this->language->get('entry_bkmexpress_amount');
+		$data['entry_bkmexpress_total'] 		= $this->language->get('entry_bkmexpress_total');
 
 		$data['button_confirm'] = $this->language->get('button_confirm');
 
@@ -61,51 +61,51 @@ class ControllerExtensionPaymentPayfull extends Controller {
             $base_url = $this->config->get('config_url');
         }
 
-        $data['payfull_bkm_status']      = $this->config->get('payfull_bkm_status');
-        $data['visa_img_path']                  = $base_url.'image/payfull/payfull_creditcard_visa.png';
-        $data['master_img_path']                = $base_url.'image/payfull/payfull_creditcard_master.png';
-        $data['maestro_img_path']               = $base_url.'image/payfull/payfull_creditcard_maestro.png';
-        $data['troy_img_path']                  = $base_url.'image/payfull/payfull_creditcard_troy.png';
-        $data['not_supported_img_path']         = $base_url.'image/payfull/payfull_creditcard_not_supported.png';
-        $data['payfull_3dsecure_status']       = $this->config->get('payfull_3dsecure_status');
-        $data['payfull_force_3dsecure_status'] = $this->config->get('payfull_force_3dsecure_status');
-        $data['payfull_banks_images']          = $base_url.'image/payfull/';
-        $data['payfull_logo']                  = $base_url.'image/payfull/payfull-logo.png';
+        $data['bkmexpress_bkm_status']      = $this->config->get('bkmexpress_bkm_status');
+        $data['visa_img_path']                  = $base_url.'image/bkmexpress/bkmexpress_creditcard_visa.png';
+        $data['master_img_path']                = $base_url.'image/bkmexpress/bkmexpress_creditcard_master.png';
+        $data['maestro_img_path']               = $base_url.'image/bkmexpress/bkmexpress_creditcard_maestro.png';
+        $data['troy_img_path']                  = $base_url.'image/bkmexpress/bkmexpress_creditcard_troy.png';
+        $data['not_supported_img_path']         = $base_url.'image/bkmexpress/bkmexpress_creditcard_not_supported.png';
+        $data['bkmexpress_3dsecure_status']       = $this->config->get('bkmexpress_3dsecure_status');
+        $data['bkmexpress_force_3dsecure_status'] = $this->config->get('bkmexpress_force_3dsecure_status');
+        $data['bkmexpress_banks_images']          = $base_url.'image/bkmexpress/';
+        $data['bkmexpress_logo']                  = $base_url.'image/bkmexpress/bkmexpress-logo.png';
 
 		$this->load->model('checkout/order');
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		$total 		= $this->currency->format($order_info['total'], $order_info['currency_code'], false, true);
 		$data['total']         = $total;
-        return $this->load->view('extension/payment/payfull', $data);
+        return $this->load->view('extension/payment/bkmexpress', $data);
 	}
 
 	public function get_card_info(){
 
 		$this->load->model('checkout/order');
-		$this->load->model('extension/payment/payfull');
+		$this->load->model('extension/payment/bkmexpress');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-        $order_info['total'] = $this->model_extension_payment_payfull->getOneShotTotal($order_info['total']);
-        $payfull_3dsecure_status 	= $this->config->get('payfull_3dsecure_status');
-        $payfull_installment_status = $this->config->get('payfull_installment_status');
+        $order_info['total'] = $this->model_extension_payment_bkmexpress->getOneShotTotal($order_info['total']);
+        $bkmexpress_3dsecure_status 	= $this->config->get('bkmexpress_3dsecure_status');
+        $bkmexpress_installment_status = $this->config->get('bkmexpress_installment_status');
 
 		//default data
 		$defaultTotal 				= $this->currency->format($order_info['total'], $order_info['currency_code'], false, true);
 		$json 						= array();
-		$json['has3d'] 				= $payfull_3dsecure_status;
+		$json['has3d'] 				= $bkmexpress_3dsecure_status;
 		$json['installments'] 		= [['count' => 1, 'installment_total'=>$defaultTotal, 'total'=>$defaultTotal]];
 		$json['bank_id'] 	    	= '';
 		$json['card_type'] 	    	= '';
 
 		//no cc number
-		if(empty($this->request->post['cc_number']) OR !$payfull_installment_status){
+		if(empty($this->request->post['cc_number']) OR !$bkmexpress_installment_status){
 			header('Content-type: text/json');
 			echo json_encode($json);
 			exit;
 		}
 
 		//get info from API about bank + card + instalments
-		$card_info  		 = json_decode($this->model_extension_payment_payfull->get_card_info(), true);
-		$installments_info 	 = json_decode($this->model_extension_payment_payfull->getInstallments(), true);
+		$card_info  		 = json_decode($this->model_extension_payment_bkmexpress->get_card_info(), true);
+		$installments_info 	 = json_decode($this->model_extension_payment_bkmexpress->getInstallments(), true);
 
 		//no bank is detected
 		if(!isset($card_info['data']['bank_id']) Or $card_info['data']['bank_id'] == '') {
@@ -148,10 +148,10 @@ class ControllerExtensionPaymentPayfull extends Controller {
         }
 
 		$oneShotTotal 				= $this->currency->format($order_info['total'], $order_info['currency_code'], false, true);
-		$json['has3d'] 				= ($payfull_3dsecure_status)?1:0;
+		$json['has3d'] 				= ($bkmexpress_3dsecure_status)?1:0;
 
 		//installments is not allowed for some reason
-		if(!$payfull_installment_status){
+		if(!$bkmexpress_installment_status){
 			$json['installments'] = [['count' => 1, 'installment_total'=>$oneShotTotal, 'total'=>$oneShotTotal]];
 			header('Content-type: text/json');
 			echo json_encode($json);
@@ -165,7 +165,7 @@ class ControllerExtensionPaymentPayfull extends Controller {
 
         //get info from API about extra instalments
         $extraInstallmentsAndInstallmentsArr = [];
-        $extra_installments_info 	         = json_decode($this->model_extension_payment_payfull->getExtraInstallments(), true);
+        $extra_installments_info 	         = json_decode($this->model_extension_payment_bkmexpress->getExtraInstallments(), true);
         if(isset($extra_installments_info['data']['campaigns'])) {
             foreach($extra_installments_info['data']['campaigns'] as $extra_installments_row){
                 if(
@@ -183,7 +183,7 @@ class ControllerExtensionPaymentPayfull extends Controller {
 
             if($installment['count'] == 1) continue;
 
-            if($this->config->get('payfull_installment_commission')){
+            if($this->config->get('bkmexpress_installment_commission')){
                 $commission = $installment['commission'];
                 $commission = str_replace('%', '', $commission);
             }else{
@@ -199,7 +199,7 @@ class ControllerExtensionPaymentPayfull extends Controller {
 			$installment_total = $this->currency->format($installment_total, $order_info['currency_code'], false, true);
 			$bank_info['installments'][$justNormalKey]['installment_total'] = $installment_total;
 
-            if($this->config->get('payfull_extra_installment_status')){
+            if($this->config->get('bkmexpress_extra_installment_status')){
                 if(isset($extraInstallmentsAndInstallmentsArr[$installment['count']])) $bank_info['installments'][$justNormalKey]['hasExtra'] = '1';
                 else																   $bank_info['installments'][$justNormalKey]['hasExtra'] = '0';
             }
@@ -223,9 +223,9 @@ class ControllerExtensionPaymentPayfull extends Controller {
 	public function get_extra_installments(){
 
         $this->load->model('checkout/order');
-        $this->load->model('extension/payment/payfull');
+        $this->load->model('extension/payment/bkmexpress');
         $order_info 		= $this->model_checkout_order->getOrder($this->session->data['order_id']);
-        $installments_info  = json_decode($this->model_extension_payment_payfull->getInstallments(), true);
+        $installments_info  = json_decode($this->model_extension_payment_bkmexpress->getInstallments(), true);
 
         //default data
         $total              = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
@@ -251,7 +251,7 @@ class ControllerExtensionPaymentPayfull extends Controller {
         }
 
         //get info from API about extra instalments
-        $extra_installments_info 	= json_decode($this->model_extension_payment_payfull->getExtraInstallments(), true);
+        $extra_installments_info 	= json_decode($this->model_extension_payment_bkmexpress->getExtraInstallments(), true);
 
         //no correct response
         if(!isset($extra_installments_info['data']['campaigns'])) {
@@ -278,7 +278,7 @@ class ControllerExtensionPaymentPayfull extends Controller {
 	}
 
 	public function send(){
-		$this->load->model('extension/payment/payfull');
+		$this->load->model('extension/payment/bkmexpress');
 
 		$json = array();
 
@@ -289,7 +289,7 @@ class ControllerExtensionPaymentPayfull extends Controller {
 			exit;
 		}
 
-		$response                           = $this->model_extension_payment_payfull->send();
+		$response                           = $this->model_extension_payment_bkmexpress->send();
 
 		//html response
 		if(strpos($response, '<form') !== False OR strpos($response, '<html')){
@@ -302,7 +302,7 @@ class ControllerExtensionPaymentPayfull extends Controller {
         $responseData['campaign_id']        = isset($responseData['campaign_id'])?$responseData['campaign_id']:0;
 
         if(!isset($responseData['status'])){
-            $json['error']['general_error'] = 'Payfull gateway connection problem';
+            $json['error']['general_error'] = 'Bkmexpress gateway connection problem';
             echo json_encode($json);
             exit;
         }
@@ -316,35 +316,35 @@ class ControllerExtensionPaymentPayfull extends Controller {
         //3d html response
         if (!isset($responseData['html']) OR $responseData['html'] == '') {
             //success
-            $this->model_extension_payment_payfull->saveResponse($responseData);
+            $this->model_extension_payment_bkmexpress->saveResponse($responseData);
             $this->addSubTotalForInstCommission($responseData);
-            $this->model_checkout_order->addOrderHistory($responseData['passive_data'], $this->config->get('payfull_order_status_id'));
+            $this->model_checkout_order->addOrderHistory($responseData['passive_data'], $this->config->get('bkmexpress_order_status_id'));
             $json['success'] = $this->url->link('checkout/success');
 		}else{
             //success need to print html 3d response
-			$this->db->query('insert into `'.DB_PREFIX.'payfull_3d_form` SET html="'.htmlspecialchars($responseData['html']).'"');
-			$this->session->data['payfull_3d_form_id'] = $this->db->getLastId();
-			$json['success'] = $this->url->link('extension/payment/payfull/secure');
+			$this->db->query('insert into `'.DB_PREFIX.'bkmexpress_3d_form` SET html="'.htmlspecialchars($responseData['html']).'"');
+			$this->session->data['bkmexpress_3d_form_id'] = $this->db->getLastId();
+			$json['success'] = $this->url->link('extension/payment/bkmexpress/secure');
 		}
 		echo json_encode($json);
 	}
 
     public function addSubTotalForInstCommission($responseData){
         //no need if the installments commission is inactive
-        if(!$this->config->get('payfull_installment_commission') OR (isset($responseData['installments']) AND $responseData['installments'] < 2)){
+        if(!$this->config->get('bkmexpress_installment_commission') OR (isset($responseData['installments']) AND $responseData['installments'] < 2)){
             return;
         }
 
         $this->load->model('checkout/order');
-        $this->language->load('extension/payment/payfull');
+        $this->language->load('extension/payment/bkmexpress');
         $installmentsCommissionFound        = false;
         $order_info                         = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-        $payfull_commission_sub_total_title = $this->language->get('commission_sub_total_title');
+        $bkmexpress_commission_sub_total_title = $this->language->get('commission_sub_total_title');
         $sort_order                         = 0;
         $installments_number                = 1;
         $installments_commission            = 0;
 
-        $installments_info 	= $this->model_extension_payment_payfull->getInstallments();
+        $installments_info 	= $this->model_extension_payment_bkmexpress->getInstallments();
         $installments_info  = json_decode($installments_info, true);
 
         if(!isset($installments_info['data'])) $installments_info['data'] = [];
@@ -363,7 +363,7 @@ class ControllerExtensionPaymentPayfull extends Controller {
         }
 
 		//get extra installments
-		$sql 		 = "SELECT * from `".DB_PREFIX."payfull_order` where order_id = '" . (int)$order_info['order_id'] . "'";
+		$sql 		 = "SELECT * from `".DB_PREFIX."bkmexpress_order` where order_id = '" . (int)$order_info['order_id'] . "'";
 		$transaction = $this->db->query($sql)->row;
 		if(isset($transaction['extra_installments']) AND $transaction['extra_installments'] != '' AND $transaction['extra_installments'] > 0){
 			$installments_number .= ' +'.$transaction['extra_installments'];
@@ -376,7 +376,7 @@ class ControllerExtensionPaymentPayfull extends Controller {
 		}
 
         $subTotalValue = $order_info['total'] * ($installments_commission/100);
-        $subTotalText  = $payfull_commission_sub_total_title.$installments_number.' '.$installments_commission.'% '.$this->currency->format($subTotalValue, $order_info['currency_code'], true, true);;
+        $subTotalText  = $bkmexpress_commission_sub_total_title.$installments_number.' '.$installments_commission.'% '.$this->currency->format($subTotalValue, $order_info['currency_code'], true, true);;
         $newOrderTotal = $subTotalValue + $order_info['total'];
 
         if($installmentsCommissionFound){
@@ -387,7 +387,7 @@ class ControllerExtensionPaymentPayfull extends Controller {
     }
 
 	public function validatePaymentData(){
-		$this->language->load('extension/payment/payfull');
+		$this->language->load('extension/payment/bkmexpress');
 		$error = [];
 
 		if(!isset($this->request->post['cc_name']) OR $this->request->post['cc_name'] == ''){
@@ -444,17 +444,17 @@ class ControllerExtensionPaymentPayfull extends Controller {
             $error['cc_month'] = $this->language->get('entry_cc_date_wrong');
         }
 
-        if(isset($this->request->post['use3d']) AND $this->request->post['use3d'] AND !$this->config->get('payfull_3dsecure_status')){
-            if(!$this->config->get('payfull_force_3dsecure_debit')){
+        if(isset($this->request->post['use3d']) AND $this->request->post['use3d'] AND !$this->config->get('bkmexpress_3dsecure_status')){
+            if(!$this->config->get('bkmexpress_force_3dsecure_debit')){
                 $error['general_error'] = $this->language->get('entry_3d_not_available');
             }
         }
 
-		if(isset($this->request->post['useBKM']) AND $this->request->post['useBKM'] AND !$this->config->get('payfull_bkm_status')){
+		if(isset($this->request->post['useBKM']) AND $this->request->post['useBKM'] AND !$this->config->get('bkmexpress_bkm_status')){
 			$error['general_error'] = $this->language->get('entry_bkm_not_available');
 		}
 
-		if(isset($this->request->post['useBKM']) AND $this->request->post['useBKM'] AND $this->config->get('payfull_bkm_status')){
+		if(isset($this->request->post['useBKM']) AND $this->request->post['useBKM'] AND $this->config->get('bkmexpress_bkm_status')){
 			unset($error['cc_name']);
 			unset($error['cc_number']);
 			unset($error['cc_cvc']);
@@ -516,10 +516,10 @@ class ControllerExtensionPaymentPayfull extends Controller {
 
     public function secure(){
         try{
-            $html = $this->db->query('select html from `'.DB_PREFIX.'payfull_3d_form` WHERE payfull_3d_form_id = "'.$this->session->data['payfull_3d_form_id'].'"');
+            $html = $this->db->query('select html from `'.DB_PREFIX.'bkmexpress_3d_form` WHERE bkmexpress_3d_form_id = "'.$this->session->data['bkmexpress_3d_form_id'].'"');
             $html = isset($html->row['html'])?$html->row['html']:'Bad Request';
             //delete form
-            $this->db->query('delete from `'.DB_PREFIX.'payfull_3d_form` WHERE payfull_3d_form_id = "'.$this->session->data['payfull_3d_form_id'].'"');
+            $this->db->query('delete from `'.DB_PREFIX.'bkmexpress_3d_form` WHERE bkmexpress_3d_form_id = "'.$this->session->data['bkmexpress_3d_form_id'].'"');
             echo htmlspecialchars_decode($html);
         } catch (Exception $e){
             echo 'Bad Request';
@@ -527,12 +527,12 @@ class ControllerExtensionPaymentPayfull extends Controller {
     }
 
 	public function callback() {
-		$this->load->model('extension/payment/payfull');
+		$this->load->model('extension/payment/bkmexpress');
 
         $post = $this->request->post;
 
 		//hash
-		$merchantPassword = $this->config->get('payfull_password');
+		$merchantPassword = $this->config->get('bkmexpress_password');
 		$hash             = self::generateHash($post, $merchantPassword);
 
 		//extra installments
@@ -540,7 +540,7 @@ class ControllerExtensionPaymentPayfull extends Controller {
         $post['campaign_id']        = isset($post['campaign_id'])?$post['campaign_id']:0;
 
 		//save response 
-		$this->model_extension_payment_payfull->saveResponse($post);
+		$this->model_extension_payment_bkmexpress->saveResponse($post);
 
 		if (isset($post['passive_data'])) {
 			$order_id = $post['passive_data'];
@@ -553,7 +553,7 @@ class ControllerExtensionPaymentPayfull extends Controller {
 		$order_info = $this->model_checkout_order->getOrder($order_id);
 		if ($order_info && $post['ErrorCode'] == '00' && ($hash == $post["hash"])) {
 			$responseData =  $post;
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payfull_order_status_id'));
+			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('bkmexpress_order_status_id'));
 			$this->addSubTotalForInstCommission($responseData);
 			$this->response->redirect($this->url->link('checkout/success'));
 		}else{
