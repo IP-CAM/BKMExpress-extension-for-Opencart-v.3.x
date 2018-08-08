@@ -3,9 +3,9 @@ class ControllerSaleBkmexpress extends Controller {
     private $error = array();
 
     public function index() {
-        $this->load->language('sale/bkmexpress');
+        $this->load->language('extension/sale/bkmexpress');
         $this->document->setTitle($this->language->get('heading_title'));
-        $this->load->model('sale/bkmexpress');
+        $this->load->model('extension/sale/bkmexpress');
         $this->getList();
     }
 
