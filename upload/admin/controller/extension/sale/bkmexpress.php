@@ -1,5 +1,5 @@
 <?php
-class ControllerSaleBkmexpress extends Controller {
+class ControllerExtensionSaleBkmexpress extends Controller {
     private $error = array();
 
     public function index() {
