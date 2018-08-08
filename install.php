@@ -14,3 +14,9 @@ $this->db->query("
 	  `date_added` DATETIME NOT NULL,
 	  PRIMARY KEY (`bkmexpress_order_id`)
 	) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;");
+
+$this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "bkmexpress_html_response` (
+  `response_id` int(11) NOT NULL AUTO_INCREMENT,
+  `response_html` text NOT NULL,
+  PRIMARY KEY (`response_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1");
