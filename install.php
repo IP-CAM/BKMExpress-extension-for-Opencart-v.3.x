@@ -14,3 +14,5 @@ $this->db->query("
 	  `date_added` DATETIME NOT NULL,
 	  PRIMARY KEY (`bkmexpress_order_id`)
 	) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;");
+
+$registry->set('customer', new Customer($registry));

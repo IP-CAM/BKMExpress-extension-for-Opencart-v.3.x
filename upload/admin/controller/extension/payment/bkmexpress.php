@@ -4,6 +4,10 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
 
 	public function index() {
 
+        require_once(DIR_SYSTEM . '/library/Bkmexpress/BKMExpress.php');
+        $obj = new BKMExpress;
+        $obj->test();
+
         $this->load->language('extension/payment/bkmexpress');
 		$this->document->setTitle($this->language->get('heading_title'));
 		$this->load->model('setting/setting');
@@ -84,7 +88,6 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
         } else {
             $data['bkmexpress_merchantid'] = $this->config->get('bkmexpress_merchantid');
         }
-
         //----
 
 		if (isset($this->request->post['bkmexpress_total'])) {
@@ -109,6 +112,11 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
 			$data['bkmexpress_geo_zone_id'] = $this->config->get('bkmexpress_geo_zone_id');
 		}
 
+        if (isset($this->request->post['payment_payfull_status'])) {
+            $data['payment_payfull_status'] = $this->request->post['payment_payfull_status'];
+        } else {
+            $data['payment_payfull_status'] = $this->config->get('payment_payfull_status');
+        }
 		$this->load->model('localisation/geo_zone');
 
 		$data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();

@@ -39,9 +39,6 @@
                                        placeholder="{{ entry_transaction_id }}" id="input-transaction-id"
                                        class="form-control"/>
                             </div>
-                        </div>
-
-                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label" for="input-order-id">{{ entry_order_id }}</label>
                                 <input type="text" name="filter_order_id" value="{{ filter_order_id }}"
@@ -49,35 +46,30 @@
                                        class="form-control"/>
                             </div>
                         </div>
-
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label"
-                                for="input-date-added">{{ entry_date_added }}</label>
+                                       for="input-date-added">{{ entry_date_added }}</label>
                                 <div class="input-group date">
                                     <input type="text" name="filter_date_added"
-                                    value="{{ filter_date_added }}"
-                                    placeholder="{{ entry_date_added }}" data-date-format="YYYY-MM-DD"
-                                    id="input-date-added" class="form-control"/>
+                                           value="{{ filter_date_added }}"
+                                           placeholder="{{ entry_date_added }}" data-date-format="YYYY-MM-DD"
+                                           id="input-date-added" class="form-control"/>
                                     <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                                    </span>
-                                </div>
+                  <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                  </span></div>
                             </div>
-                        </div>
-
-                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label" for="input-status">{{ entry_status }}</label>
                                 <select name="filter_status" id="input-status" class="form-control">
                                     <option value="*"></option>
-                                    {% if filter_status %}
-                                        <option value="1" selected="selected">{{ text_complete }}</option>
+                                    {% if filter_status }}
+                                    <option value="1" selected="selected">{{ text_complete }}</option>
                                     {% else %}
-                                        <option value="1">{{ text_complete }}</option>
-                                    {% endif %}
-                                    {% if filter_status == false and  filter_status is null %}
-                                        <option value="0" selected="selected">{{ text_failed }}</option>
+                                    <option value="1">{{ text_complete }}</option>
+                                    <?php } ?>
+                                    {% if filter_status == false and  filter_status is null }}
+                                    <option value="0" selected="selected">{{ text_failed }}</option>
                                     {% else %}
                                         <option value="0">{{ text_failed }}</option>
                                     {% endif %}
@@ -86,10 +78,6 @@
                             <button type="button" id="button-filter" class="btn btn-primary pull-right"><i
                                         class="fa fa-search"></i> {{ button_filter }}</button>
                         </div>
-
-
-
-
                     </div>
                 </div>
 
@@ -102,10 +90,14 @@
                                                                                    onclick="$('input[name*=\'selected\']').prop('checked', this.checked);"/>
                                 </td>
 
-
+                                <!--<td class="text-right">{% if sort == 'po.bkmexpress_order_id' }}
+                                  <a href="{{ sort_bkmexpress_order_id }}" class="{{ order|lower }}">{{ column_bkmexpress_order_id }}</a>
+                                  <?php } else { ?>
+                                  <a href="{{ sort_bkmexpress_order_id }}">{{ column_bkmexpress_order_id }}</a>
+                                  <?php } ?></td>-->
 
                                 <td class="text-right">
-                                    {% if sort == 'po.order_id' %}
+                                    {% if sort == 'po.order_id' }}
                                     <a href="{{ sort_order_id }}"
                                        class="{{ order|lower }}">{{ column_order_id }}</a>
                                     {% else %}
@@ -114,7 +106,7 @@
                                 </td>
 
                                 <td class="text-right">
-                                    {% if sort == 'po.transaction_id' %}
+                                    {% if sort == 'po.transaction_id' }}
                                     <a href="{{ sort_transaction_id }}"
                                        class="{{ order|lower }}">{{ column_transaction_id }}</a>
                                     {% else %}
@@ -123,7 +115,7 @@
                                 </td>
 
                                 <td class="text-right">
-                                    {% if sort == 'o.total' %}
+                                    {% if sort == 'o.total' }}
                                     <a href="{{ sort_total }}"
                                        class="{{ order|lower }}">{{ column_total }}</a>
                                     {% else %}
@@ -132,7 +124,7 @@
                                 </td>
 
                                 <td class="text-right">
-                                    {% if sort == 'po.try_total' %}
+                                    {% if sort == 'po.try_total' }}
                                     <a href="{{ sort_try_total }}"
                                        class="{{ order|lower }}">{{ column_try_total }}</a>
                                     {% else %}
@@ -141,7 +133,7 @@
                                 </td>
 
                                 <td class="text-right">
-                                    {% if sort == 'po.conversion_rate' %}
+                                    {% if sort == 'po.conversion_rate' }}
                                     <a href="{{ sort_conversion_rate }}"
                                        class="{{ order|lower }}">{{ column_conversion_rate }}</a>
                                     {% else %}
@@ -149,8 +141,7 @@
                                     {% endif %}
                                 </td>
 
-                                <td class="text-right">
-                                    {% if sort == 'po.client_ip' %}
+                                <td class="text-right">{% if sort == 'po.client_ip' }}
                                     <a href="{{ sort_client_ip }}"
                                        class="{{ order|lower }}">{{ column_client_ip }}</a>
                                     {% else %}
@@ -158,16 +149,15 @@
                                     {% endif %}
                                 </td>
 
-                                <td class="text-left">
-                                    {% if sort == 'po.status' %}
+                                <td class="text-left">{% if sort == 'po.status' }}
                                     <a href="{{ sort_status }}"
                                        class="{{ order|lower }}">{{ column_status }}</a>
-                                    {% else %}
+                                    <?php } else { ?>
                                     <a href="{{ sort_status }}">{{ column_status }}</a>
                                     {% endif %}
                                 </td>
                                 <td class="text-left">
-                                    {% if sort == 'po.date_added' %}
+                                    {% if sort == 'po.date_added' }}
                                     <a href="{{ sort_date_added }}"
                                        class="{{ order|lower }}">{{ column_date_added }}</a>
                                     {% else %}
@@ -178,29 +168,29 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% if transactions %}
-                                {% for transaction in transactions %}
-                                    <tr>
-                                        <td class="text-center">
-                                            {% if transaction['bkmexpress_order_id'] in selected %}
-                                                <input type="checkbox" name="selected[]"
-                                                       value="{{ transaction['bkmexpress_order_id'] }}"
-                                                       checked="checked"/>
-                                            {% else %}
-                                                <input type="checkbox" name="selected[]"
-                                                       value="{{ transaction['bkmexpress_order_id'] }}"/>
-                                            {% endif %}
-                                        </td>
+                            {% if transactions }}
+                            {% for transaction in transactions %}
+                                <tr>
+                                    <td class="text-center">
+                                        {% if transaction['bkmexpress_order_id'] in selected %}
+                                            <input type="checkbox" name="selected[]"
+                                                   value="{{ transaction['bkmexpress_order_id'] }}"
+                                                   checked="checked"/>
+                                        {% else %}
+                                            <input type="checkbox" name="selected[]"
+                                                   value="{{ transaction['bkmexpress_order_id'] }}"/>
+                                        {% endif %}
+                                    </td>
 
-                                        <td class="text-right">{{ transaction['order_id'] }}</td>
-                                        <td class="text-right">{{ transaction['transaction_id'] }}</td>
-                                        <td class="text-right">{{ transaction['total'] }}</td>
-                                        <td class="text-right">{{ transaction['try_total'] }}</td>
-                                        <td class="text-right">{{ transaction['conversion_rate'] }}</td>
-                                        <td class="text-right">{{ transaction['client_ip'] }}</td>
-                                        <td class="text-left">{{ transaction['status'] }}</td>
-                                        <td class="text-left">{{ transaction['date_added'] }}</td>
-                                    </tr>
+                                    <td class="text-right">{{ transaction['order_id'] }}</td>
+                                    <td class="text-right">{{ transaction['transaction_id'] }}</td>
+                                    <td class="text-right">{{ transaction['total'] }}</td>
+                                    <td class="text-right">{{ transaction['try_total'] }}</td>
+                                    <td class="text-right">{{ transaction['conversion_rate'] }}</td>
+                                    <td class="text-right">{{ transaction['client_ip'] }}</td>
+                                    <td class="text-left">{{ transaction['status'] }}</td>
+                                    <td class="text-left">{{ transaction['date_added'] }}</td>
+                                </tr>
                                 {% endfor %}
                             {% else %}
                                 <tr>
