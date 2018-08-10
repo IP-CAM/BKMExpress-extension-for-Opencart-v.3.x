@@ -61,6 +61,7 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
 			$this->db->query('insert into `'.DB_PREFIX.'bkmexpress_html_response` SET response_html="'.htmlspecialchars($responseData['html']).'"');
 			$this->session->data['response_id'] = $this->db->getLastId();
 			$json['success'] = $this->url->link('extension/payment/bkmexpress/secure');
+			$json['response_html'] = htmlspecialchars($responseData['html']);
 		}
 		echo json_encode($json);
 	}

@@ -25,9 +25,10 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
 		$data['entry_yes'] = $this->language->get('entry_yes');
 		$data['entry_no'] = $this->language->get('entry_no');
 
-		$data['entry_endpoint'] = $this->language->get('entry_endpoint');
-		$data['entry_username'] = $this->language->get('entry_username');
-		$data['entry_password'] = $this->language->get('entry_password');
+		$data['entry_privatekey'] = $this->language->get('entry_privatekey');
+		$data['entry_preprod'] = $this->language->get('entry_preprod');
+		$data['entry_merchantid'] = $this->language->get('entry_merchantid');
+
 		$data['entry_order_status'] = $this->language->get('entry_order_status');
 		$data['entry_total'] = $this->language->get('entry_total');
 		$data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
@@ -66,23 +67,25 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
 		$data['action'] = $this->url->link('extension/payment/bkmexpress', 'user_token=' . $this->session->data['user_token'], true);
         $data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true);
 
-		if (isset($this->request->post['bkmexpress_endpoint'])) {
-			$data['bkmexpress_endpoint'] = $this->request->post['bkmexpress_endpoint'];
-		} else {
-			$data['bkmexpress_endpoint'] = $this->config->get('bkmexpress_endpoint');
-		}
 
-		if (isset($this->request->post['bkmexpress_username'])) {
-			$data['bkmexpress_username'] = $this->request->post['bkmexpress_username'];
-		} else {
-			$data['bkmexpress_username'] = $this->config->get('bkmexpress_username');
-		}
+        //--- BKMExpress fields
+        if (isset($this->request->post['bkmexpress_privatekey'])) {
+            $data['bkmexpress_privatekey'] = $this->request->post['bkmexpress_privatekey'];
+        } else {
+            $data['bkmexpress_privatekey'] = $this->config->get('bkmexpress_privatekey');
+        }
+        if (isset($this->request->post['bkmexpress_preprod'])) {
+            $data['bkmexpress_preprod'] = $this->request->post['bkmexpress_preprod'];
+        } else {
+            $data['bkmexpress_preprod'] = $this->config->get('bkmexpress_preprod');
+        }
+        if (isset($this->request->post['bkmexpress_merchantid'])) {
+            $data['bkmexpress_merchantid'] = $this->request->post['bkmexpress_merchantid'];
+        } else {
+            $data['bkmexpress_merchantid'] = $this->config->get('bkmexpress_merchantid');
+        }
 
-		if (isset($this->request->post['bkmexpress_password'])) {
-			$data['bkmexpress_password'] = $this->request->post['bkmexpress_password'];
-		} else {
-			$data['bkmexpress_password'] = $this->config->get('bkmexpress_password');
-		}
+        //----
 
 		if (isset($this->request->post['bkmexpress_total'])) {
 			$data['bkmexpress_total'] = $this->request->post['bkmexpress_total'];
