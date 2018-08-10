@@ -2,7 +2,8 @@
 <div id="content">
     <div class="page-header">
         <div class="container-fluid">
-            <div class="pull-right"><a href="{{ delete }}" class="btn btn-default"><i class="fa fa-reply"></i> {{ button_delete }}</a></div>
+            <div class="pull-right"><a href="{{ delete }}" class="btn btn-default"><i
+                            class="fa fa-reply"></i> {{ button_delete }}</a></div>
             <h1>{{ heading_title }}</h1>
             <ul class="breadcrumb">
                 {% for breadcrumb in breadcrumbs %}
@@ -29,7 +30,6 @@
             <div class="panel-body">
                 <div class="well">
                     <div class="row">
-
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label"
@@ -39,6 +39,9 @@
                                        placeholder="{{ entry_transaction_id }}" id="input-transaction-id"
                                        class="form-control"/>
                             </div>
+                        </div>
+
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label" for="input-order-id">{{ entry_order_id }}</label>
                                 <input type="text" name="filter_order_id" value="{{ filter_order_id }}"
@@ -46,40 +49,50 @@
                                        class="form-control"/>
                             </div>
                         </div>
+
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label"
-                                       for="input-date-added">{{ entry_date_added }}</label>
+                                for="input-date-added">{{ entry_date_added }}</label>
                                 <div class="input-group date">
                                     <input type="text" name="filter_date_added"
-                                           value="{{ filter_date_added }}"
-                                           placeholder="{{ entry_date_added }}" data-date-format="YYYY-MM-DD"
-                                           id="input-date-added" class="form-control"/>
+                                    value="{{ filter_date_added }}"
+                                    placeholder="{{ entry_date_added }}" data-date-format="YYYY-MM-DD"
+                                    id="input-date-added" class="form-control"/>
                                     <span class="input-group-btn">
-                  <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                  </span></div>
+                                    <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                                    </span>
+                                </div>
                             </div>
+                        </div>
+
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label" for="input-status">{{ entry_status }}</label>
                                 <select name="filter_status" id="input-status" class="form-control">
                                     <option value="*"></option>
-                                    <?php if ($filter_status) { ?>
-                                    <option value="1" selected="selected">{{ text_complete }}</option>
-                                    <?php } else { ?>
-                                    <option value="1">{{ text_complete }}</option>
-                                    <?php } ?>
-                                    <?php if (!$filter_status && !is_null($filter_status)) { ?>
-                                    <option value="0" selected="selected">{{ text_failed }}</option>
-                                    <?php } else { ?>
-                                    <option value="0">{{ text_failed }}</option>
-                                    <?php } ?>
+                                    {% if filter_status %}
+                                        <option value="1" selected="selected">{{ text_complete }}</option>
+                                    {% else %}
+                                        <option value="1">{{ text_complete }}</option>
+                                    {% endif %}
+                                    {% if filter_status == false and  filter_status is null %}
+                                        <option value="0" selected="selected">{{ text_failed }}</option>
+                                    {% else %}
+                                        <option value="0">{{ text_failed }}</option>
+                                    {% endif %}
                                 </select>
                             </div>
                             <button type="button" id="button-filter" class="btn btn-primary pull-right"><i
                                         class="fa fa-search"></i> {{ button_filter }}</button>
                         </div>
+
+
+
+
                     </div>
                 </div>
+
                 <form action="{{ delete }}" method="post" enctype="multipart/form-data" id="form-transaction">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
@@ -89,100 +102,116 @@
                                                                                    onclick="$('input[name*=\'selected\']').prop('checked', this.checked);"/>
                                 </td>
 
-                                <!--<td class="text-right"><?php if ($sort == 'po.bkmexpress_order_id') { ?>
-                                  <a href="{{ sort_bkmexpress_order_id }}" class="<?php echo strtolower($order) }}">{{ column_bkmexpress_order_id }}</a>
-                                  <?php } else { ?>
-                                  <a href="{{ sort_bkmexpress_order_id }}">{{ column_bkmexpress_order_id }}</a>
-                                  <?php } ?></td>-->
 
-                                <td class="text-right"><?php if ($sort == 'po.order_id') { ?>
+
+                                <td class="text-right">
+                                    {% if sort == 'po.order_id' %}
                                     <a href="{{ sort_order_id }}"
-                                       class="<?php echo strtolower($order) }}">{{ column_order_id }}</a>
-                                    <?php } else { ?>
+                                       class="{{ order|lower }}">{{ column_order_id }}</a>
+                                    {% else %}
                                     <a href="{{ sort_order_id }}">{{ column_order_id }}</a>
-                                    <?php } ?></td>
+                                    {% endif %}
+                                </td>
 
-                                <td class="text-right"><?php if ($sort == 'po.transaction_id') { ?>
+                                <td class="text-right">
+                                    {% if sort == 'po.transaction_id' %}
                                     <a href="{{ sort_transaction_id }}"
-                                       class="<?php echo strtolower($order) }}">{{ column_transaction_id }}</a>
-                                    <?php } else { ?>
-                                    <a href="{{ sort_transaction_id }}">{{ column_transaction_id }}</a>
-                                    <?php } ?></td>
+                                       class="{{ order|lower }}">{{ column_transaction_id }}</a>
+                                    {% else %}
+                                        <a href="{{ sort_transaction_id }}">{{ column_transaction_id }}</a>
+                                    {% endif %}
+                                </td>
 
-                                <td class="text-right"><?php if ($sort == 'o.total') { ?>
+                                <td class="text-right">
+                                    {% if sort == 'o.total' %}
                                     <a href="{{ sort_total }}"
-                                       class="<?php echo strtolower($order) }}">{{ column_total }}</a>
-                                    <?php } else { ?>
-                                    <a href="{{ sort_total }}">{{ column_total }}</a>
-                                    <?php } ?></td>
+                                       class="{{ order|lower }}">{{ column_total }}</a>
+                                    {% else %}
+                                        <a href="{{ sort_total }}">{{ column_total }}</a>
+                                    {% endif %}
+                                </td>
 
-                                <td class="text-right"><?php if ($sort == 'po.try_total') { ?>
+                                <td class="text-right">
+                                    {% if sort == 'po.try_total' %}
                                     <a href="{{ sort_try_total }}"
-                                       class="<?php echo strtolower($order) }}">{{ column_try_total }}</a>
-                                    <?php } else { ?>
-                                    <a href="{{ sort_try_total }}">{{ column_try_total }}</a>
-                                    <?php } ?></td>
+                                       class="{{ order|lower }}">{{ column_try_total }}</a>
+                                    {% else %}
+                                        <a href="{{ sort_try_total }}">{{ column_try_total }}</a>
+                                    {% endif %}
+                                </td>
 
-                                <td class="text-right"><?php if ($sort == 'po.conversion_rate') { ?>
+                                <td class="text-right">
+                                    {% if sort == 'po.conversion_rate' %}
                                     <a href="{{ sort_conversion_rate }}"
-                                       class="<?php echo strtolower($order) }}">{{ column_conversion_rate }}</a>
-                                    <?php } else { ?>
-                                    <a href="{{ sort_conversion_rate }}">{{ column_conversion_rate }}</a>
-                                    <?php } ?></td>
+                                       class="{{ order|lower }}">{{ column_conversion_rate }}</a>
+                                    {% else %}
+                                        <a href="{{ sort_conversion_rate }}">{{ column_conversion_rate }}</a>
+                                    {% endif %}
+                                </td>
 
-                                <td class="text-right"><?php if ($sort == 'po.client_ip') { ?>
+                                <td class="text-right">
+                                    {% if sort == 'po.client_ip' %}
                                     <a href="{{ sort_client_ip }}"
-                                       class="<?php echo strtolower($order) }}">{{ column_client_ip }}</a>
-                                    <?php } else { ?>
-                                    <a href="{{ sort_client_ip }}">{{ column_client_ip }}</a>
-                                    <?php } ?></td>
+                                       class="{{ order|lower }}">{{ column_client_ip }}</a>
+                                    {% else %}
+                                        <a href="{{ sort_client_ip }}">{{ column_client_ip }}</a>
+                                    {% endif %}
+                                </td>
 
-                                <td class="text-left"><?php if ($sort == 'po.status') { ?>
+                                <td class="text-left">
+                                    {% if sort == 'po.status' %}
                                     <a href="{{ sort_status }}"
-                                       class="<?php echo strtolower($order) }}">{{ column_status }}</a>
-                                    <?php } else { ?>
+                                       class="{{ order|lower }}">{{ column_status }}</a>
+                                    {% else %}
                                     <a href="{{ sort_status }}">{{ column_status }}</a>
-                                    <?php } ?></td>
-                                <td class="text-left"><?php if ($sort == 'po.date_added') { ?>
+                                    {% endif %}
+                                </td>
+                                <td class="text-left">
+                                    {% if sort == 'po.date_added' %}
                                     <a href="{{ sort_date_added }}"
-                                       class="<?php echo strtolower($order) }}">{{ column_date_added }}</a>
-                                    <?php } else { ?>
-                                    <a href="{{ sort_date_added }}">{{ column_date_added }}</a>
-                                    <?php } ?></td>
+                                       class="{{ order|lower }}">{{ column_date_added }}</a>
+                                    {% else %}
+                                        <a href="{{ sort_date_added }}">{{ column_date_added }}</a>
+                                    {% endif %}
+                                </td>
+
                             </tr>
                             </thead>
                             <tbody>
-                            <?php if ($transactions) { ?>
-                            <?php foreach ($transactions as $transaction) { ?>
-                            <tr>
-                                <td class="text-center"><?php if (in_array($transaction['bkmexpress_order_id'], $selected)) { ?>
-                                    <input type="checkbox" name="selected[]"
-                                           value="{{ transaction['bkmexpress_order_id'] }}"
-                                           checked="checked"/>
-                                    <?php } else { ?>
-                                    <input type="checkbox" name="selected[]"
-                                           value="{{ transaction['bkmexpress_order_id'] }}"/>
-                                    <?php } ?></td>
+                            {% if transactions %}
+                                {% for transaction in transactions %}
+                                    <tr>
+                                        <td class="text-center">
+                                            {% if transaction['bkmexpress_order_id'] in selected %}
+                                                <input type="checkbox" name="selected[]"
+                                                       value="{{ transaction['bkmexpress_order_id'] }}"
+                                                       checked="checked"/>
+                                            {% else %}
+                                                <input type="checkbox" name="selected[]"
+                                                       value="{{ transaction['bkmexpress_order_id'] }}"/>
+                                            {% endif %}
+                                        </td>
 
-                                <td class="text-right">{{ transaction['order_id'] }}</td>
-                                <td class="text-right">{{ transaction['transaction_id'] }}</td>
-                                <td class="text-right">{{ transaction['total'] }}</td>
-                                <td class="text-right">{{ transaction['try_total'] }}</td>
-                                <td class="text-right">{{ transaction['conversion_rate'] }}</td>
-                                <td class="text-right">{{ transaction['client_ip'] }}</td>
-                                <td class="text-left">{{ transaction['status'] }}</td>
-                                <td class="text-left">{{ transaction['date_added'] }}</td>
-                            </tr>
-                            <?php } ?>
-                            <?php } else { ?>
-                            <tr>
-                                <td class="text-center" colspan="13">{{ text_no_results }}</td>
-                            </tr>
-                            <?php } ?>
+                                        <td class="text-right">{{ transaction['order_id'] }}</td>
+                                        <td class="text-right">{{ transaction['transaction_id'] }}</td>
+                                        <td class="text-right">{{ transaction['total'] }}</td>
+                                        <td class="text-right">{{ transaction['try_total'] }}</td>
+                                        <td class="text-right">{{ transaction['conversion_rate'] }}</td>
+                                        <td class="text-right">{{ transaction['client_ip'] }}</td>
+                                        <td class="text-left">{{ transaction['status'] }}</td>
+                                        <td class="text-left">{{ transaction['date_added'] }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td class="text-center" colspan="13">{{ text_no_results }}</td>
+                                </tr>
+                            {% endif %}
                             </tbody>
                         </table>
                     </div>
                 </form>
+
                 <div class="row">
                     <div class="col-sm-6 text-left">{{ pagination }}</div>
                     <div class="col-sm-6 text-right">{{ results }}</div>
