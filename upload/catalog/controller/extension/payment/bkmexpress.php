@@ -43,7 +43,7 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
 		if(strpos($response, '<form') !== False OR strpos($response, '<html')){
 		    $responseData = ['html'=>$response, 'status'=>True];
 		}else{
-		    $responseData = json_decode($response, true);
+		    $responseData = @json_decode($response, true);
 		}
 
         if(!isset($responseData['status'])){
@@ -73,7 +73,7 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
 
     public function secure(){
         try{
-            $html = $this->db->query('select html from `'.DB_PREFIX.'bkmexpress_html_response` WHERE response_id = "'.$this->session->data['response_id'].'"');
+            $html = $this->db->query('select response_html from `'.DB_PREFIX.'bkmexpress_html_response` WHERE response_id = "'.$this->session->data['response_id'].'"');
             $html = isset($html->row['response_html'])?$html->row['response_html']:'Bad Request';
             //delete form
             $this->db->query('delete from `'.DB_PREFIX.'bkmexpress_html_response` WHERE response_id = "'.$this->session->data['response_id'].'"');

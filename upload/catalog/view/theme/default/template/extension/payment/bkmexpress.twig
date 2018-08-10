@@ -1,6 +1,6 @@
 <form class="form-horizontal">
     <fieldset id="payment">
-        <legend> {{ text_credit_card }} <img src=" {{ bkmexpress_logo }}"></legend>
+        <legend> <img src=" {{ bkmexpress_logo }}"></legend>
         <div class="tabcontent" id="bkmPaymentMethod">
             <p> {{ text_bkm_explanation }}</p>
         </div>
@@ -16,6 +16,7 @@
 </div>
 
 <script type="text/javascript">
+    var confirmButton = $('#button-confirm');
     confirmButton.bind('click', function () {
         $.ajax({
             url: 'index.php?route=extension/payment/bkmexpress/send',
@@ -52,29 +53,11 @@
 
 </script>
 <style>
-    .toatl_label h3 {
-        margin: 15px 0 0 0;
-    }
-    .toatl_label {
-        display: none;
-    }
     fieldset#payment {
-        text-align: center;
-        max-width: 590px;
-        margin: 0 auto;
+        text-align: left;
     }
     fieldset#payment legend img {
         vertical-align: middle !important;
-    }
-    fieldset#payment .form-group .col-sm-6 {
-        text-align: center;
-        margin: 0 auto !important;
-        width: 100%;
-        float: none;
-    }
-    .buttons .pull-right {
-        float: none !important;
-        text-align: center;
-        margin: 0 auto;
+        max-width: 130px;
     }
 </style>
