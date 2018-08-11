@@ -3,11 +3,6 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
 	private $error = array();
 
 	public function index() {
-
-        require_once(DIR_SYSTEM . '/library/Bkmexpress/BKMExpress.php');
-        $obj = new BKMExpress;
-        $obj->test();
-
         $this->load->language('extension/payment/bkmexpress');
 		$this->document->setTitle($this->language->get('heading_title'));
 		$this->load->model('setting/setting');

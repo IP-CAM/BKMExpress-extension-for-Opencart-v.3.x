@@ -2,6 +2,26 @@
 class ControllerExtensionPaymentBkmexpress extends Controller {
 
 	public function index() {
+        if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
+            $openCartBaseUrl = $this->config->get('config_ssl');
+        } else {
+            $openCartBaseUrl = $this->config->get('config_url');
+        }
+
+	    //prepare BKMExpress parameters for view
+        require_once(DIR_SYSTEM . '/library/Bkmexpress/BKMExpress.php');
+        $bkmExpressObj = new BKMExpress;
+        $merchantPrivateKey = $this->config->get('bkmexpress_privatekey');
+        $preProdMode = $this->config->get('bkmexpress_preprod');
+        $merchantId = $this->config->get('bkmexpress_merchantid');
+        $nonceURL = $this->url->link('extension/payment/bkmexpress/nonce');
+        $installmentsURL = $this->url->link('extension/payment/bkmexpress/installments');
+        $bkmExpressParams = $bkmExpressObj->initSale($merchantPrivateKey, $preProdMode, $merchantId, $nonceURL, $installmentsURL);
+        $data['bkm_express_params'] = $bkmExpressParams;
+        $data['bkm_express_cancel_url'] = $this->url->link('extension/payment/bkmexpress/cancel');;
+        $data['bkm_express_success_url'] = $this->url->link('extension/payment/bkmexpress/success');;
+        $data['bkm_express_js_url'] = $openCartBaseUrl . '/system/library/Bkmexpress/BKMExpress.js';
+
 
 		$this->language->load('extension/payment/bkmexpress');
         if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {

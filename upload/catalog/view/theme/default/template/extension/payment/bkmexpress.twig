@@ -13,50 +13,11 @@
         <input type="button" value=" {{ button_confirm }}" id="button-confirm" data-loading-text=" {{ text_loading }}"
                class="btn btn-primary"/>
     </div>
+    <div id="payment-modal"></div>
 </div>
 
-<div class="bkmexpressResponse" style="display: none"></div>
 
-<script type="text/javascript">
-    var confirmButton = $('#button-confirm');
-    confirmButton.bind('click', function () {
-        $.ajax({
-            url: 'index.php?route=extension/payment/bkmexpress/send',
-            type: 'post',
-            data: $('#payment select, #payment input[type="text"], #payment input[type="hidden"], #payment input[type="checkbox"]:checked, #payment input[type="radio"]:checked'),
-            dataType: 'json',
 
-            beforeSend: function () {
-                $('.alert').remove();
-                $('#button-confirm').attr('disabled', true);
-                $('#payment').before('<div class="alert alert-info"><i class="fa fa-info-circle"></i>  {{ text_wait }}</div>');
-            },
-
-            complete: function () {
-                $('#button-confirm').attr('disabled', false);
-                $('.attention').remove();
-            },
-
-            success: function (json) {
-                if (json['success']) {
-                    //location = json['success'];
-                    $('.bkmexpressResponse').html($.parseHTML(json['response_html']));
-                    $('.bkmexpressResponse').css('display', 'block');
-
-                    return true;
-                }
-
-                $('.alert').remove();
-
-                if (json['error']['general_error']) {
-                    $('#payment').after('<div class="alert alert-warning"><i class="fa fa-info-circle"></i> '
-                        + json['error']['general_error'] + '</div>');
-                }
-            }
-        });
-    });
-
-</script>
 <style>
     fieldset#payment {
         text-align: left;
@@ -66,3 +27,59 @@
         max-width: 130px;
     }
 </style>
+
+
+
+<script type="text/javascript" src="{{ bkm_express_js_url }}"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+    var confirmButton = $('#button-confirm');
+    confirmButton.bind('click', function () {
+        var ticketIdForInit = "{{ bkm_express_params['ticketShortId'] }}";
+        var ticketPathForInit = "{{ bkm_express_params['ticketPath'] }}";
+        var ticketTokenForInit = "{{ bkm_express_params['ticketToken'] }}";
+
+        Bex.init({"id":ticketIdForInit,"path":ticketPathForInit,"token":ticketTokenForInit}, "modal", {
+            container: "payment-modal",
+            buttonSize: [135, 70],
+            skipButton: true,
+            onCancel: function(){
+                jQuery.ajax({
+                    type: "GET",
+                    url: "{{ bkm_express_cancel_url }}",
+                    timeout: 100000,
+                    success: function (data){
+                        if(typeof data != 'undefended'){
+                            var ticket = [];
+                            ticket["id"] = JSON.parse(data).id;
+                            ticket["path"] = JSON.parse(data).path;
+                            ticket["token"] = JSON.parse(data).token;
+                            Bex.refresh(ticket);
+                        }
+
+                    }
+                });
+            },
+            onComplete: function(status){
+                alert(status);
+                jQuery.ajax({
+                    type : "POST",
+                    url : "{{ bkm_express_success_url }}?result="+ticketPathForInit,
+                    timeout : 100000,
+                    success: function (data){
+                        if(typeof data != 'undefended'){
+                            var ticket = [];
+                            ticket["id"] = JSON.parse(data).id;
+                            ticket["path"] = JSON.parse(data).path;
+                            ticket["token"] = JSON.parse(data).token;
+                            Bex.refresh(ticket);
+                        }
+
+                    }
+                });
+            }
+        });
+
+    });
+
+</script>
