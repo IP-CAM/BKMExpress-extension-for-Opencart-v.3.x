@@ -9,7 +9,7 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
         }
 
 	    //prepare BKMExpress parameters for view
-        require_once(DIR_SYSTEM . '/library/Bkmexpress/BKMExpress.php');
+        require_once(DIR_SYSTEM . 'library/Bkmexpress/BKMExpress.php');
         $bkmExpressObj = new BKMExpress;
         $merchantPrivateKey = $this->config->get('bkmexpress_privatekey');
         $preProdMode = $this->config->get('bkmexpress_preprod');
@@ -106,9 +106,9 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
             }
         }
 
-        require_once(DIR_SYSTEM . '/library/Bkmexpress/BKMExpress.php');
+        require_once(DIR_SYSTEM . 'library/Bkmexpress/BKMExpress.php');
         $bkmExpressObj = new BKMExpress;
-        $bkmExpressObj->installments($installmentsArray);
+        $bkmExpressObj->installments($installmentsArray, $bankConfigArray);
     }
 
 }
