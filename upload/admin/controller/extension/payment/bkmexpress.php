@@ -16,7 +16,7 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
         }
 
 		//BKMexpress class help come here
-        require_once(DIR_SYSTEM . '/library/Bkmexpress/BKMExpress.php');
+        require_once(DIR_SYSTEM . 'library/bkmexpress/BKMExpress.php');
         $data['heading_title'] = $this->language->get('heading_title');
         $bkmExpressObj = new BKMExpress;
         $data['entry_bank_list_array'] = $bkmExpressObj->getBankList();
