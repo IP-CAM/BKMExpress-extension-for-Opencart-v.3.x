@@ -7,14 +7,50 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
 		$this->document->setTitle($this->language->get('heading_title'));
 		$this->load->model('setting/setting');
 
-		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			$this->model_setting_setting->editSetting('bkmexpress', $this->request->post);
-			//for opencart 3
-			$this->model_setting_setting->editSetting('payment_bkmexpress', $this->request->post);
-			$this->session->data['success'] = $this->language->get('text_success');
+        if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+            $this->model_setting_setting->editSetting('bkmexpress', $this->request->post);
+            //for opencart 3
+            $this->model_setting_setting->editSetting('payment_bkmexpress', $this->request->post);
+            $this->session->data['success'] = $this->language->get('text_success');
             $this->response->redirect($this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true));
-		}
+        }
+
+		//BKMexpress class help come here
+        require_once(DIR_SYSTEM . '/library/Bkmexpress/BKMExpress.php');
         $data['heading_title'] = $this->language->get('heading_title');
+        $bkmExpressObj = new BKMExpress;
+        $data['entry_bank_list_array'] = $bkmExpressObj->getBankList();
+        foreach($data['entry_bank_list_array'] as $bankIdInLoop=>$bankArrayInLoop){
+            //bank config
+            foreach($bankArrayInLoop['params'] as $bankParamMachineName=>$bankParamTitleValue){
+                $openCartMachineNameForField = "bkmexpress_$bankParamMachineName$bankIdInLoop";
+                if (isset($this->request->post[$openCartMachineNameForField])) {
+                    $data[$openCartMachineNameForField] = $this->request->post[$openCartMachineNameForField];
+                } else {
+                    $data[$openCartMachineNameForField] = $this->config->get($openCartMachineNameForField);
+                }
+                $data['entry_bank_list_array'][$bankIdInLoop]['params'][$bankParamMachineName]['value'] = $data[$openCartMachineNameForField];
+            }
+            //installments
+            for ($x = 2; $x <= 12; $x++) {
+                $bankInstallmentsField = 'bkmexpress_installments_'.$x.'_'.$bankIdInLoop;
+                if (isset($this->request->post[$bankInstallmentsField])) {
+                    $data[$bankInstallmentsField] = $this->request->post[$bankInstallmentsField];
+                } else {
+                    $data[$bankInstallmentsField] = $this->config->get($bankInstallmentsField);
+                }
+                $data['entry_bank_list_array'][$bankIdInLoop]['installments'][$x] =
+                    ( isset($data[$bankInstallmentsField]) AND $data[$bankInstallmentsField])?'checked="checked"':'';
+            }
+        }
+        //-----------
+
+        $data['heading_title'] = $this->language->get('heading_title');
+
+        $data['text_bkmexpress_config'] = $this->language->get('text_bkmexpress_config');
+        $data['text_bkmexpress_bank_config'] = $this->language->get('text_bkmexpress_bank_config');
+        $data['text_bkmexpress_bank_installments'] = $this->language->get('text_bkmexpress_bank_installments');
+        $data['text_bkmexpress_bank_installment'] = $this->language->get('text_bkmexpress_bank_installment');
 
 		$data['text_edit'] = $this->language->get('text_edit');
 		$data['text_enabled'] = $this->language->get('text_enabled');
@@ -27,6 +63,9 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
 		$data['entry_privatekey'] = $this->language->get('entry_privatekey');
 		$data['entry_preprod'] = $this->language->get('entry_preprod');
 		$data['entry_merchantid'] = $this->language->get('entry_merchantid');
+		$data['entry_bank_name'] = $this->language->get('entry_bank_name');
+		$data['entry_vpos_user_id'] = $this->language->get('entry_vpos_user_id');
+		$data['entry_vpos_password'] = $this->language->get('entry_vpos_password');
 
 		$data['entry_order_status'] = $this->language->get('entry_order_status');
 		$data['entry_total'] = $this->language->get('entry_total');

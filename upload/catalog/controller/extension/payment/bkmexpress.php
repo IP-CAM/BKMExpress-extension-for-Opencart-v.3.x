@@ -86,66 +86,29 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
 		echo json_encode($json);
 	}
 
-	public function validatePaymentData(){
-		$this->language->load('extension/payment/bkmexpress');
-		$error = [];
-		return $error;
-	}
-
-    public function secure(){
-        try{
-            $html = $this->db->query('select response_html from `'.DB_PREFIX.'bkmexpress_html_response` WHERE response_id = "'.$this->session->data['response_id'].'"');
-            $html = isset($html->row['response_html'])?$html->row['response_html']:'Bad Request';
-            //delete form
-            $this->db->query('delete from `'.DB_PREFIX.'bkmexpress_html_response` WHERE response_id = "'.$this->session->data['response_id'].'"');
-            echo htmlspecialchars_decode($html);
-        } catch (Exception $e){
-            echo 'Bad Request';
+	public function installments(){
+        $data['entry_bank_list_array'] = $this->config->get('entry_bank_list_array');
+        $installmentsArray = $bankConfigArray = [];
+        foreach($data['entry_bank_list_array'] as $bankIdInLoop=>$bankArrayInLoop){
+            //bank config
+            foreach($bankArrayInLoop['params'] as $bankParamMachineName=>$bankParamTitleValue){
+                $openCartMachineNameForField = "bkmexpress_$bankParamMachineName$bankIdInLoop";
+                $openCartParamValue = $this->config->get($openCartMachineNameForField);
+                $bankConfigArray[$bankIdInLoop]['params'][$bankParamMachineName]['value'] = $openCartParamValue;
+            }
+            //installments
+            for ($x = 2; $x <= 12; $x++) {
+                $installmentsArray[$bankIdInLoop] = [$x=>False];
+                $bankInstallmentsField = 'bkmexpress_installments_'.$x.'_'.$bankIdInLoop;
+                $instActive = $this->config->get($bankInstallmentsField);
+                $installmentsArray[$bankIdInLoop][$x] =
+                    ( isset($instActive) AND $instActive)?True:False;
+            }
         }
+
+        require_once(DIR_SYSTEM . '/library/Bkmexpress/BKMExpress.php');
+        $bkmExpressObj = new BKMExpress;
+        $bkmExpressObj->installments($installmentsArray);
     }
 
-	public function callback() {
-		$this->load->model('extension/payment/bkmexpress');
-
-        $post = $this->request->post;
-
-		//hash
-		$merchantPassword = $this->config->get('bkmexpress_password');
-		$hash             = self::generateHash($post, $merchantPassword);
-
-		//save response 
-		$this->model_extension_payment_bkmexpress->saveResponse($post);
-
-		if (isset($post['passive_data'])) {
-			$order_id = $post['passive_data'];
-		} else {
-			$order_id = 0;
-		}
-
-		$this->load->model('checkout/order');
-
-		$order_info = $this->model_checkout_order->getOrder($order_id);
-		if ($order_info && $post['ErrorCode'] == '00' && ($hash == $post["hash"])) {
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('bkmexpress_order_status_id'));
-			$this->response->redirect($this->url->link('checkout/success'));
-		}else{
-			$this->response->redirect($this->url->link('checkout/failure'));
-		}
-	}
-
-    protected static function generateHash($params, $password){
-        $arr = [];
-        if(isset($params['hash']))  unset($params['hash']);
-        if(isset($params['_csrf'])) unset($params['_csrf']);
-
-        foreach($params as $param_key=>$param_val){$arr[strtolower($param_key)]=$param_val;}
-        ksort($arr);
-        $hashString_char_count = "";
-		foreach ($arr as $key=>$val) {
-		    $l =  mb_strlen($val);
-		    if($l) $hashString_char_count .= $l . $val;
-		}
-		$hashString_char_count      = strtolower(hash_hmac("sha1", $hashString_char_count, $password));
-		return $hashString_char_count;
-	}
 }

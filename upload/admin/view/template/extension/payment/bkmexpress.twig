@@ -28,115 +28,212 @@
                 <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
             </div>
             <div class="panel-body">
-                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-bkmexpress"
-                      class="form-horizontal">
-
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-privatekey">
-                            {{ entry_privatekey }}
-                        </label>
-                        <div class="col-sm-10">
-                            <textarea id="input-privatekey" name="bkmexpress_privatekey" class="form-control" >{{ bkmexpress_privatekey }}</textarea>
+                <dev class="col-sm-3">
+                    <div class="list-group">
+                        <div class="list-group-item active mainBKMConfigTab">
+                            <h4 class="list-group-item-heading">{{ text_bkmexpress_config }}<i class="fa fa-arrow-right fa-fw pull-right"></i></h4>
+                        </div>
+                        <div class="list-group-item mainBankConfigTab">
+                            <h4 class="list-group-item-heading">{{ text_bkmexpress_bank_config }}<i class="fa fa-arrow-right fa-fw pull-right"></i></h4>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-merchantid">
-                            {{ entry_merchantid }}
-                        </label>
-                        <div class="col-sm-10">
-                            <input type="text" id="input-merchantid" name="bkmexpress_merchantid" value="{{ bkmexpress_merchantid }}"
-                                   placeholder="{{ entry_merchantid }}"
-                                   class="form-control"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-preprod">{{ entry_preprod }}</label>
-                        <div class="col-sm-10">
-                            <select name="bkmexpress_preprod" id="input-preprod" class="form-control">
-                                {% if bkmexpress_preprod == 1 %}
-                                    <option value="1" selected="selected">{{ text_enabled }}</option>
-                                    <option value="0">{{ text_disabled }}</option>
-                                {% else %}
-                                    <option value="1">{{ text_enabled }}</option>
-                                    <option value="0" selected="selected">{{ text_disabled }}</option>
-                                {% endif %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-total">
+                </dev>
+                <dev class="col-sm-9">
+                    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-bkmexpress" class="form-horizontal">
+                        <div class="mainBKMConfigContent" style="display: block">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-privatekey">
+                                    {{ entry_privatekey }}
+                                </label>
+                                <div class="col-sm-10">
+                                    <textarea id="input-privatekey" name="bkmexpress_privatekey" class="form-control" >{{ bkmexpress_privatekey }}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-merchantid">
+                                    {{ entry_merchantid }}
+                                </label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="input-merchantid" name="bkmexpress_merchantid" value="{{ bkmexpress_merchantid }}"
+                                           placeholder="{{ entry_merchantid }}"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-preprod">{{ entry_preprod }}</label>
+                                <div class="col-sm-10">
+                                    <select name="bkmexpress_preprod" id="input-preprod" class="form-control">
+                                        {% if bkmexpress_preprod == 1 %}
+                                            <option value="1" selected="selected">{{ text_enabled }}</option>
+                                            <option value="0">{{ text_disabled }}</option>
+                                        {% else %}
+                                            <option value="1">{{ text_enabled }}</option>
+                                            <option value="0" selected="selected">{{ text_disabled }}</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-total">
                             <span data-toggle="tooltip" title="{{ help_total }}">
                                 {{ entry_total }}
                             </span>
-                        </label>
-                        <div class="col-sm-10">
-                            <input type="text" name="bkmexpress_total" value="{{ bkmexpress_total }}"
-                                   placeholder="{{ entry_total }}" id="input-total" class="form-control"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label"
-                               for="input-order-status">{{ entry_order_status }}</label>
-                        <div class="col-sm-10">
-                            <select name="bkmexpress_order_status_id" id="input-order-status" class="form-control">
-                                {%  for order_status in order_statuses %}
-                                    {% if order_status.order_status_id == bkmexpress_order_status_id %}
-                                    <option value="{{ order_status.order_status_id }}"
-                                            selected="selected">{{ order_status.name }}</option>
-                                    {% else %}
-                                    <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label"
-                               for="input-geo-zone">{{ entry_geo_zone }}</label>
-                        <div class="col-sm-10">
-                            <select name="bkmexpress_geo_zone_id" id="input-geo-zone" class="form-control">
-                                <option value="0">{{ text_all_zones }}</option>
-                                {% for geo_zone in geo_zones %}
-                                    {%  if geo_zone.geo_zone_id == bkmexpress_geo_zone_id %}
-                                        <option value="{{ geo_zone.geo_zone_id }}"
-                                                selected="selected">{{ geo_zone.name }}</option>
+                                </label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="bkmexpress_total" value="{{ bkmexpress_total }}"
+                                           placeholder="{{ entry_total }}" id="input-total" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"
+                                       for="input-order-status">{{ entry_order_status }}</label>
+                                <div class="col-sm-10">
+                                    <select name="bkmexpress_order_status_id" id="input-order-status" class="form-control">
+                                        {%  for order_status in order_statuses %}
+                                            {% if order_status.order_status_id == bkmexpress_order_status_id %}
+                                                <option value="{{ order_status.order_status_id }}"
+                                                        selected="selected">{{ order_status.name }}</option>
+                                            {% else %}
+                                                <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"
+                                       for="input-geo-zone">{{ entry_geo_zone }}</label>
+                                <div class="col-sm-10">
+                                    <select name="bkmexpress_geo_zone_id" id="input-geo-zone" class="form-control">
+                                        <option value="0">{{ text_all_zones }}</option>
+                                        {% for geo_zone in geo_zones %}
+                                            {%  if geo_zone.geo_zone_id == bkmexpress_geo_zone_id %}
+                                                <option value="{{ geo_zone.geo_zone_id }}"
+                                                        selected="selected">{{ geo_zone.name }}</option>
+                                            {% else %}
+                                                <option value="{{ geo_zone.geo_zone_id }}">{{ geo_zone.name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+                                <div class="col-sm-10">
+                                    <select name="payment_bkmexpress_status" id="input-status" class="form-control">
+                                        {% if payment_bkmexpress_status == 1 %}
+                                            <option value="1" selected="selected">{{ text_enabled }}</option>
+                                            <option value="0">{{ text_disabled }}</option>
                                         {% else %}
-                                        <option value="{{ geo_zone.geo_zone_id }}">{{ geo_zone.name }}</option>
-                                    {% endif %}
+                                            <option value="1">{{ text_enabled }}</option>
+                                            <option value="0" selected="selected">{{ text_disabled }}</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"
+                                       for="input-sort-order">{{ entry_sort_order }}</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="bkmexpress_sort_order" value="{{ bkmexpress_sort_order }}"
+                                           placeholder="{{ entry_sort_order }}" id="input-sort-order"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mainBankConfigContent" style="display: none">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-preprod">{{ entry_bank_name }}</label>
+                                <div class="col-sm-10">
+                                    <select name="bkmexpress_bank_name" id="input-bank-name" class="form-control">
+                                            <option value="" selected="selected">{{ entry_bank_name }}</option>
+                                        {% for bankId, bankArray in entry_bank_list_array %}
+                                            <option value="{{ bankId }}">{{ bankArray['name'] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            {% for bankId, bankArray in entry_bank_list_array %}
+                                {% for bankFieldMachineName, bankFieldTitleValue in bankArray['params'] %}
+                                    <div class="form-group form-group-bank bank{{ bankId }}" style="display: none">
+                                        <label class="col-sm-2 control-label" for="{{ bankFieldMachineName }}{{ bankId }}">{{ bankFieldTitleValue['title'] }}</label>
+                                        <div class="col-sm-10">
+                                            <input type="text"
+                                                   id="{{ bankFieldMachineName }}{{ bankId }}"
+                                                   name="bkmexpress_{{ bankFieldMachineName }}{{ bankId }}"
+                                                   value="{{ bankFieldTitleValue['value'] }}"
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
                                 {% endfor %}
-                            </select>
-                        </div>
-                    </div>
+                                <div class="form-group form-group-bank bank{{ bankId }}" style="display: none">
+                                    <label class="col-sm-2 control-label">{{ text_bkmexpress_bank_installments }}</label>
+                                    <div class="col-sm-10">
+                                        {% for i in range(2, 12) %}
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2" style="padding-top: 0;">{{ text_bkmexpress_bank_installment }} {{ i }}</label>
+                                                <div class="col-sm-10">
+                                                    <input name="bkmexpress_installments_{{ i }}_{{ bankId }}"
+                                                           id="bkmexpress_installments_{{ i }}_{{ bankId }}"
+                                                           class="form-control"
+                                                           type="checkbox"
+                                                            {% for InstallmentIndex, InstallmentValue in bankArray['installments'] %}
+                                                                {% if InstallmentIndex == i %}
+                                                                    {{ InstallmentValue }}
+                                                                {% endif %}
+                                                            {% endfor %}
 
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
-                        <div class="col-sm-10">
-                            <select name="payment_bkmexpress_status" id="input-status" class="form-control">
-                                {% if payment_bkmexpress_status == 1 %}
-                                <option value="1" selected="selected">{{ text_enabled }}</option>
-                                <option value="0">{{ text_disabled }}</option>
-                                {% else %}
-                                <option value="1">{{ text_enabled }}</option>
-                                <option value="0" selected="selected">{{ text_disabled }}</option>
-                                {% endif %}
-                            </select>
+                                                    >
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label"
-                               for="input-sort-order">{{ entry_sort_order }}</label>
-                        <div class="col-sm-10">
-                            <input type="text" name="bkmexpress_sort_order" value="{{ bkmexpress_sort_order }}"
-                                   placeholder="{{ entry_sort_order }}" id="input-sort-order"
-                                   class="form-control"/>
-                        </div>
-                    </div>
-                </form>
+
+                    </form>
+
+                </dev>
             </div>
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    var mainBKMConfigTab = $('.mainBKMConfigTab');
+    var mainBankConfigTab = $('.mainBankConfigTab');
+    var mainBKMConfigContent = $('.mainBKMConfigContent');
+    var mainBankConfigContent = $('.mainBankConfigContent');
+    var bankSelector = $('#input-bank-name');
+    mainBKMConfigTab.click(function(){
+        mainBankConfigTab.removeClass('active');
+        mainBKMConfigTab.addClass('active');
+        mainBKMConfigContent.show();
+        mainBankConfigContent.hide();
+    });
+    mainBankConfigTab.click(function(){
+        mainBKMConfigTab.removeClass('active');
+        mainBankConfigTab.addClass('active');
+        mainBKMConfigContent.hide();
+        mainBankConfigContent.show();
+    });
+    bankSelector.change(function(){
+        $('.form-group-bank').hide();
+        $('.bank'+$(this).val()).show();
+    });
+
+</script>
+
+<style>
+    .mainBKMConfigTab:hover, .mainBankConfigTab:hover{
+        cursor: pointer;
+    }
+    #input-bank-name {
+        background: #1e91cf;
+        color: white;
+        font-weight: bold;
+    }
+</style>
 {{ footer }}

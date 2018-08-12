@@ -3,6 +3,11 @@
 $_['heading_title']					= 'BKMExpress Ödeme Girişi';
 
 // Text
+$_['text_bkmexpress_config'] = 'BKMExpress Config';
+$_['text_bkmexpress_bank_config'] = 'Banks Config';
+$_['text_bkmexpress_bank_installments'] = 'Taksitler';
+$_['text_bkmexpress_bank_installment'] = 'Taksit';
+
 $_['text_payment']					= 'Ödeme';
 $_['text_success']					= 'Başarılı: BKMExpress ödeme modülünü değiştirdiniz!';
 $_['text_edit']                     = 'BKMExpress Düzenle';
@@ -13,6 +18,7 @@ $_['text_bkmexpress']					= '<a href="https://www.bkmexpress.com" target="_blank
 $_['entry_privatekey']				= 'Özel anahtar';
 $_['entry_preprod']			    	= 'Pre Prod Modu';
 $_['entry_merchantid']				= 'Merchant Id';
+$_['entry_bank_name']				= 'Banka Seç';
 $_['entry_total']					= 'Toplam';
 $_['entry_order_status']			= 'Sipariş Durumu';
 $_['entry_geo_zone']				= 'Coğrafi Bölge';
