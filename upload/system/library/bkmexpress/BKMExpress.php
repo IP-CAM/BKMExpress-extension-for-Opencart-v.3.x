@@ -331,44 +331,35 @@ class RequestMerchInfoService
 
     public function prepareVposConfig($bankCode){
         $vposConfig = new VposConfig();
+
         if (Banks::AKBANK == $bankCode) {
-            $vposConfig->setVposUserId("akapi");
-            $vposConfig->setVposPassword("TEST1234");
-            $vposConfig->addExtra("ClientId", "100111222");
-            $vposConfig->addExtra("storekey", "TEST1234");
+            $vposConfig->setVposUserId($this->bankConfigArray[$bankCode]['params']['vposUserId']['value']);
+            $vposConfig->setVposPassword($this->bankConfigArray[$bankCode]['params']['vposPassword']['value']);
+            $vposConfig->addExtra("ClientId", $this->bankConfigArray[$bankCode]['params']['clientId']['value']);
+            $vposConfig->addExtra("storekey", $this->bankConfigArray[$bankCode]['params']['storeKey']['value']);
             $vposConfig->setBankIndicator($bankCode);
-            $vposConfig->setServiceUrl("http://srvirt01:7200/akbank");
+            $vposConfig->setServiceUrl($this->bankConfigArray[$bankCode]['params']['serviceUrl']['value']);
             $vposConfig->setPreAuth(false);
         } else if(Banks::TEBBANK == $bankCode) {
-            $vposConfig->setVposUserId("bkmapi");
-            $vposConfig->setVposPassword("KUTU8520");
-            $vposConfig->addExtra("ClientId", "401562930");
-            $vposConfig->addExtra("storekey", "KUTU8520");
-            $vposConfig->setServiceUrl("http://srvirt01:7200/teb");
+            $vposConfig->setVposUserId($this->bankConfigArray[$bankCode]['params']['vposUserId']['value']);
+            $vposConfig->setVposPassword($this->bankConfigArray[$bankCode]['params']['vposPassword']['value']);
+            $vposConfig->addExtra("ClientId", $this->bankConfigArray[$bankCode]['params']['clientId']['value']);
+            $vposConfig->addExtra("storekey", $this->bankConfigArray[$bankCode]['params']['storeKey']['value']);
+            $vposConfig->setBankIndicator($bankCode);
+            $vposConfig->setServiceUrl($this->bankConfigArray[$bankCode]['params']['serviceUrl']['value']);
             $vposConfig->setBankIndicator($bankCode);
             $vposConfig->setPreAuth(false);
         } else if(Banks::GARANTI == $bankCode) {
-            $vposConfig->setVposUserId("600218");
-            $vposConfig->setVposPassword("123qweASD");
-            $vposConfig->addExtra("terminalprovuserid", "PROVAUT");
-            $vposConfig->addExtra("terminalmerchantid", "7000679");
-            $vposConfig->addExtra("storekey", "12345678");
-            $vposConfig->addExtra("terminalid", "30690168");
-            $vposConfig->setServiceUrl("http://srvirt01:7200/VPServlet");
+            $vposConfig->setVposUserId($this->bankConfigArray[$bankCode]['params']['vposUserId']['value']);
+            $vposConfig->setVposPassword($this->bankConfigArray[$bankCode]['params']['vposPassword']['value']);
+            $vposConfig->addExtra("terminalprovuserid", $this->bankConfigArray[$bankCode]['params']['terminalProvuserId']['value']);
+            $vposConfig->addExtra("terminalmerchantid", $this->bankConfigArray[$bankCode]['params']['terminalMerchantId']['value']);
+            $vposConfig->addExtra("storekey", $this->bankConfigArray[$bankCode]['params']['storeKey']['value']);
+            $vposConfig->addExtra("terminalid", $this->bankConfigArray[$bankCode]['params']['terminalId']['value']);
             $vposConfig->setBankIndicator($bankCode);
-            $vposConfig->setPreAuth(false);
+            $vposConfig->setServiceUrl($this->bankConfigArray[$bankCode]['params']['serviceUrl']['value']);
         } else if(Banks::VAKIFBANK == $bankCode) {
             //.......
-        }else{
-            $vposConfig->setVposUserId("600218");
-            $vposConfig->setVposPassword("123qweASD");
-            $vposConfig->addExtra("terminalprovuserid", "PROVAUT");
-            $vposConfig->addExtra("terminalmerchantid", "7000679");
-            $vposConfig->addExtra("storekey", "12345678");
-            $vposConfig->addExtra("terminalid", "30690168");
-            $vposConfig->setServiceUrl("http://srvirt01:7200/VPServlet");
-            $vposConfig->setBankIndicator($bankCode);
-            $vposConfig->setPreAuth(false);
         }
 
         $vp = [
@@ -379,6 +370,7 @@ class RequestMerchInfoService
             'serviceUrl' => $vposConfig->getServiceUrl(),
             'preAuth' => $vposConfig->getPreAuth(),
         ];
+
         return EncryptionUtil::encryptWithBex(json_encode($vp));
     }
 }
