@@ -6,6 +6,7 @@ require_once "src/main/Bex/merchant/request/InstallmentRequest.php";
 require_once "src/main/Bex/merchant/response/InstallmentsResponse.php";
 require_once "src/main/Bex/merchant/response/Installment.php";
 require_once "src/main/Bex/merchant/response/BinAndInstallments.php";
+require_once "src/main/Bex/merchant/response/PaymentResultResponse.php";
 
 require_once "src/main/Bex/merchant/security/EncryptionUtil.php";
 require_once "src/main/Bex/enums/Banks.php";
@@ -14,6 +15,7 @@ require_once "src/main/Bex/util/MoneyUtils.php";
 require_once "src/main/Bex/merchant/request/NonceRequest.php";
 require_once "src/main/Bex/merchant/response/nonce/MerchantNonceResponse.php";
 require_once "src/main/Bex/merchant/service/MerchantService.php";
+require_once "src/main/Bex/merchant/security/EncryptionUtil.php";
 
 use Bex\merchant\request\NonceRequest;
 use Bex\merchant\response\nonce\MerchantNonceResponse;
@@ -21,6 +23,7 @@ use Bex\merchant\service\MerchantService;
 use Bex\merchant\request\VposConfig;
 use Bex\merchant\request\InstallmentRequest;
 use Bex\merchant\response\InstallmentsResponse;
+use Bex\merchant\response\PaymentResultResponse;
 use Bex\merchant\security\EncryptionUtil;
 use Bex\enums\Banks;
 use Bex\util\MoneyUtils;
@@ -117,9 +120,8 @@ class BKMExpress
 
     }
 
-    public function installments($installmentsArray, $bankConfigArray){
+    public function installments($installmentsArray, $bankConfigArray, $data){
         header('Content-type: application/json');
-        $data = json_decode(file_get_contents('php://input'), True);
         if(!empty($data)){
             $InstallmentRequest = new InstallmentRequest(
                 $data['bin'],
@@ -136,10 +138,9 @@ class BKMExpress
         }
     }
 
-    public function nonce($merchantPrivateKey, $preProdMode, $merchantId){
+    public function nonce($merchantPrivateKey, $preProdMode, $merchantId, $data, $orderTotal, $orderStatus){
         $environment = ($preProdMode)?'PREPROD':'PRODUCTION';
         header('Content-type: application/json');
-        $data = json_decode(file_get_contents('php://input'), TRUE);
 
         if (!empty($data)) {
             ob_start();
@@ -160,10 +161,8 @@ class BKMExpress
             ob_flush();
             flush();
             session_write_close();
-            fastcgi_finish_request();
-            // Do processing here 
-            //no processing sleep(5);
-            //
+
+            //fastcgi_finish_request();
 
 
             $data["reply"]['deliveryAddress'] = null;
@@ -189,8 +188,20 @@ class BKMExpress
             $merchantService = new MerchantService($config);
             $merchantLoginResponse = $merchantService->login();
 
-            if(EncryptionUtil::verifyBexSign($nonceRequest->getTicketId(), $nonceRequest->getSignature()))
-            {
+            if($nonceRequest->getTotalAmount() != $orderTotal OR $orderStatus == False){
+                $merchantNonceResponse->setResult(false);
+                $merchantNonceResponse->setNonce($nonceRequest->getToken());
+                $merchantNonceResponse->setId($nonceRequest->getPath());
+                $merchantNonceResponse->setMessage("Wrong Order!");
+                $merchantService->sendNonceResponse(
+                    $merchantNonceResponse,
+                    $merchantLoginResponse->getPath(),
+                    $nonceRequest->getPath(), $merchantLoginResponse->getConnectionToken(),
+                    $nonceRequest->getToken()
+                );
+            }
+
+            if(EncryptionUtil::verifyBexSign($nonceRequest->getTicketId(), $nonceRequest->getSignature())){
                 $merchantNonceResponse->setResult(true);
                 $merchantNonceResponse->setNonce($nonceRequest->getToken());
                 $merchantNonceResponse->setId($nonceRequest->getPath());
@@ -217,7 +228,43 @@ class BKMExpress
             return $merchantNonceResponse;
         }else{
             echo json_encode(array("result" => "fail", "data" => "fail")) ;
+            return false;
         }
+    }
+
+    public function refresh($merchantPrivateKey, $preProdMode, $merchantId, $nonceURL, $installmentsURL, $total){
+        $environment = ($preProdMode)?'PREPROD':'PRODUCTION';
+        $config = Bex\config\BexPayment::startBexPayment($environment, $merchantId, $merchantPrivateKey);
+        $merchantService = new Bex\merchant\service\MerchantService($config);
+        $merchantResponse = $merchantService->login();
+        $ticketResponse = $merchantService->oneTimeTicketWithNonce($merchantResponse->getToken(), $total, $installmentsURL, $nonceURL);
+
+        $ticketRefresh = new \Bex\merchant\response\TicketRefresh(
+            $ticketResponse->getTicketShortId(),
+            $ticketResponse->getTicketPath(),
+            $ticketResponse->getTicketToken()
+        );
+
+        $ticketId = $ticketRefresh->getId();
+        $ticketPath = $ticketRefresh->getPath();
+        $ticketToken = $ticketRefresh->getToken();
+        exit(json_encode(["id"=>$ticketId, "path"=>$ticketPath, "token"=>$ticketToken]));
+    }
+
+    public function result($merchantPrivateKey, $preProdMode, $merchantId, $nonceURL, $installmentsURL, $total){
+        $environment = ($preProdMode)?'PREPROD':'PRODUCTION';
+        $config = Bex\config\BexPayment::startBexPayment($environment, $merchantId, $merchantPrivateKey);
+        $merchantService = new Bex\merchant\service\MerchantService($config);
+        $merchantResponse = $merchantService->login();
+        $ticketResponse = $merchantService->oneTimeTicketWithNonce($merchantResponse->getToken(), $total, $installmentsURL, $nonceURL);
+
+        $ticketResponse = new PaymentResultResponse(
+            $ticketResponse->getTicketShortId(),
+            $ticketResponse->getTicketPath(),
+            $ticketResponse->getTicketToken()
+        );
+
+        return $ticketResponse->getPaymentPurchased();
     }
 }
 

@@ -38,6 +38,7 @@
         var ticketIdForInit = "{{ bkm_express_params['ticketShortId'] }}";
         var ticketPathForInit = "{{ bkm_express_params['ticketPath'] }}";
         var ticketTokenForInit = "{{ bkm_express_params['ticketToken'] }}";
+        var orderId = "{{ bkm_express_order_id }}";
 
         Bex.init({"id":ticketIdForInit,"path":ticketPathForInit,"token":ticketTokenForInit}, "modal", {
             container: "payment-modal",
@@ -61,22 +62,21 @@
                 });
             },
             onComplete: function(status){
-                alert(status);
-                jQuery.ajax({
-                    type : "POST",
-                    url : "{{ bkm_express_success_url }}?result="+ticketPathForInit,
-                    timeout : 100000,
-                    success: function (data){
-                        if(typeof data != 'undefended'){
-                            var ticket = [];
-                            ticket["id"] = JSON.parse(data).id;
-                            ticket["path"] = JSON.parse(data).path;
-                            ticket["token"] = JSON.parse(data).token;
-                            Bex.refresh(ticket);
+                if(status == "success"){
+                    jQuery.ajax({
+                        type : "POST",
+                        url : "{{ bkm_express_result_url }}&result="+ticketPathForInit+"&orderId="+orderId,
+                        timeout : 100000,
+                        success: function (data){
+                            location.href = "{{ bkm_express_success_url }}";
+                        },
+                        fail: function (data){
+                            location.href = "{{ bkm_express_fail_url }}";
                         }
+                    });
 
-                    }
-                });
+                }
+
             }
         });
 
