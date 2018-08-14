@@ -40,6 +40,10 @@
         var ticketTokenForInit = "{{ bkm_express_params['ticketToken'] }}";
         var orderId = "{{ bkm_express_order_id }}";
 
+        $('#button-confirm').attr('disabled', true);
+        $('#payment').before('<div class="alert alert-info"><i class="fa fa-info-circle"></i>  {{ text_wait }}</div>');
+
+
         Bex.init({"id":ticketIdForInit,"path":ticketPathForInit,"token":ticketTokenForInit}, "modal", {
             container: "payment-modal",
             buttonSize: [135, 70],
