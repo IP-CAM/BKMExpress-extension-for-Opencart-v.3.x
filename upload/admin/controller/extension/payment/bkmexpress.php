@@ -162,6 +162,12 @@ class ControllerExtensionPaymentBkmexpress extends Controller {
 			$data['bkmexpress_sort_order'] = $this->config->get('bkmexpress_sort_order');
 		}
 
+        if (isset($this->request->post['payment_payfull_status'])) {
+            $data['payment_bkmexpress_status'] = $this->request->post['payment_bkmexpress_status'];
+        } else {
+            $data['payment_bkmexpress_status'] = $this->config->get('payment_bkmexpress_status');
+        }
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');

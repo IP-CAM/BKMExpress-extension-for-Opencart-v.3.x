@@ -11,6 +11,13 @@ require_once "src/main/Bex/merchant/security/EncryptionUtil.php";
 require_once "src/main/Bex/enums/Banks.php";
 require_once "src/main/Bex/util/MoneyUtils.php";
 
+require_once "src/main/Bex/merchant/request/NonceRequest.php";
+require_once "src/main/Bex/merchant/response/nonce/MerchantNonceResponse.php";
+require_once "src/main/Bex/merchant/service/MerchantService.php";
+
+use Bex\merchant\request\NonceRequest;
+use Bex\merchant\response\nonce\MerchantNonceResponse;
+use Bex\merchant\service\MerchantService;
 use Bex\merchant\request\VposConfig;
 use Bex\merchant\request\InstallmentRequest;
 use Bex\merchant\response\InstallmentsResponse;
@@ -23,27 +30,27 @@ use Bex\merchant\response\BinAndInstallments;
 class BKMExpress
 {
 
-    public function initSale($merchantPrivateKey, $preProdMode, $merchantId, $nonceURL, $installmentsURL)
+    public function initSale($merchantPrivateKey, $preProdMode, $merchantId, $nonceURL, $installmentsURL, $total)
     {
 
         $environment = ($preProdMode)?'PREPROD':'PRODUCTION';
         $config = Bex\config\BexPayment::startBexPayment($environment, $merchantId, $merchantPrivateKey);
         $merchantService = new Bex\merchant\service\MerchantService($config);
         $merchantResponse = $merchantService->login();
-        $ticketResponse = $merchantService->oneTimeTicketWithNonce($merchantResponse->getToken(), "11,12", $installmentsURL, $nonceURL);
+        $ticketResponse = $merchantService->oneTimeTicketWithNonce($merchantResponse->getToken(), $total, $installmentsURL, $nonceURL);
         $baseUrl = $config->getBexApiConfiguration()->getBaseUrl();
+        $baseJsUrl = $config->getBexApiConfiguration()->getBaseJs();
         $ticketShortId = $ticketResponse->getTicketShortId();
         $ticketPath = $ticketResponse->getTicketPath();
         $ticketToken = $ticketResponse->getTicketToken();
 
         return [
             'baseUrl'=>$baseUrl,
+            'baseJsUrl'=>$baseJsUrl,
             'ticketShortId'=>$ticketShortId,
             'ticketPath'=>$ticketPath,
             'ticketToken'=>$ticketToken,
         ];
-
-
     }
 
     public function getBankList()
@@ -124,6 +131,92 @@ class BKMExpress
             $process = new RequestMerchInfoService($installmentsArray, $bankConfigArray);
             $result = $process->getInstallmentResponse($InstallmentRequest);
             echo json_encode(['data'=>$result, 'status'=>'ok', 'error'=>'']);
+        }else{
+            echo json_encode(['data'=>[], 'status'=>'fail', 'error'=>'No Data']);
+        }
+    }
+
+    public function nonce($merchantPrivateKey, $preProdMode, $merchantId){
+        $environment = ($preProdMode)?'PREPROD':'PRODUCTION';
+        header('Content-type: application/json');
+        $data = json_decode(file_get_contents('php://input'), TRUE);
+
+        if (!empty($data)) {
+            ob_start();
+            // Send your response.
+            echo json_encode(array("result" => "ok", "data" => "ok")) ;
+            // Get the size of the output.
+            $size = ob_get_length();        // Disable compression (in case content length is compressed).
+            header("Content-Encoding: none");
+            header($_SERVER["SERVER_PROTOCOL"] . " 202 Accepted");
+            header("Status: 202 Accepted");
+            // Set the content length of the response.
+            header("Content-Length: {$size}");
+            // Close the connection.
+            header("Connection: close");
+            ignore_user_abort(true);
+            set_time_limit(0);        // Flush all output.
+            ob_end_flush();
+            ob_flush();
+            flush();
+            session_write_close();
+            fastcgi_finish_request();
+            // Do processing here 
+            //no processing sleep(5);
+            //
+
+
+            $data["reply"]['deliveryAddress'] = null;
+            $data["reply"]['billingAddress'] = null;
+            $data["reply"]["tcknMatch"] = True;
+            $data["reply"]["msisdnMatch"] = True;
+
+            $nonceRequest = new NonceRequest(
+                $data["id"],
+                $data["path"],
+                $data["issuer"],
+                $data["approver"],
+                $data["token"],
+                $data["signature"],
+                $data["reply"],
+                $data["reply"]["hash"],
+                $data["reply"]["tcknMatch"],
+                $data["reply"]["msisdnMatch"]
+            );
+
+            $config = Bex\config\BexPayment::startBexPayment($environment, $merchantId, $merchantPrivateKey);
+            $merchantNonceResponse = new MerchantNonceResponse();
+            $merchantService = new MerchantService($config);
+            $merchantLoginResponse = $merchantService->login();
+
+            if(EncryptionUtil::verifyBexSign($nonceRequest->getTicketId(), $nonceRequest->getSignature()))
+            {
+                $merchantNonceResponse->setResult(true);
+                $merchantNonceResponse->setNonce($nonceRequest->getToken());
+                $merchantNonceResponse->setId($nonceRequest->getPath());
+
+                return $merchantService->sendNonceResponse(
+                    $merchantNonceResponse,
+                    $merchantLoginResponse->getPath(),
+                    $nonceRequest->getPath(),
+                    $merchantLoginResponse->getConnectionToken(),
+                    $nonceRequest->getToken()
+                );
+            } else {
+                $merchantNonceResponse->setResult(false);
+                $merchantNonceResponse->setNonce($nonceRequest->getToken());
+                $merchantNonceResponse->setId($nonceRequest->getPath());
+                $merchantNonceResponse->setMessage("Signature verification failed");
+                $merchantService->sendNonceResponse(
+                    $merchantNonceResponse,
+                    $merchantLoginResponse->getPath(),
+                    $nonceRequest->getPath(), $merchantLoginResponse->getConnectionToken(),
+                    $nonceRequest->getToken()
+                );
+            }
+            return $merchantNonceResponse;
+        }else{
+            echo json_encode(array("result" => "fail", "data" => "fail")) ;
         }
     }
 }
@@ -140,6 +233,7 @@ class RequestMerchInfoService
     }
 
     public function getInstallmentResponse(InstallmentRequest $installmentRequest){
+
         $installmentResponse = new InstallmentsResponse();
         if(!EncryptionUtil::verifyBexSign( $installmentRequest->getTicketId() , $installmentRequest->getSignature())){
             $installmentResponse->setError("Signature verification failed");
@@ -160,15 +254,15 @@ class RequestMerchInfoService
             $installmentResponse->setError("Signature verification failed");
             return $installmentResponse;
         }
-        $installments = array();
+        $installments = [];
         $binAndBank = $installmentRequest->getBinNo()[0] ;
 
         $explodedArr = explode("@",$binAndBank);
-        foreach ($this->installmentsArray[$explodedArr[1]] as $i => $instActive){
+        foreach ($this->installmentsArray[(string)$explodedArr[1]] as $i => $instActive){
             if($instActive == False) continue;
             $instalmentAmount = MoneyUtils::toFloat($installmentRequest->getTotalAmount()) / floatval($i);
             $instalmentAmount = MoneyUtils::formatTurkishLira($instalmentAmount);
-            $vposConfig = $this->prepareVposConfig($explodedArr[1]);
+            $vposConfig = $this->prepareVposConfig((string)$explodedArr[1]);
             $installment = new Installment((string)$i,$instalmentAmount,(string)$i,$installmentRequest->getTotalAmount(), $vposConfig);
             $out =  array(
                 'numberOfInstallment' => $installment->getNumberOfInstallment() ,
@@ -230,20 +324,14 @@ class RequestMerchInfoService
             $vposConfig->setPreAuth(false);
         }
 
-        $vposConfig = [
-            'vposUserId' => '600218',
-            'vposPassword' => '123qweASD',
-            'extra' => [
-                'terminalprovuserid'=>'PROVAUT',
-                'terminalmerchantid'=>'7000679',
-                'storekey'=>'12345678',
-                'terminalid'=>'30690168',
-            ],
-            'bankIndicator' => $bankCode,
-            'serviceUrl' => 'http://srvirt01:7200/VPServlet',
-            'preAuth' => false,
+        $vp = [
+            'vposUserId' => $vposConfig->getVposUserId(),
+            'vposPassword' => $vposConfig->getVposPassword(),
+            'extra' => $vposConfig->getExtra(),
+            'bankIndicator' => $vposConfig->getBankIndicator(),
+            'serviceUrl' => $vposConfig->getServiceUrl(),
+            'preAuth' => $vposConfig->getPreAuth(),
         ];
-
-        return EncryptionUtil::encryptWithBex($vposConfig);
+        return EncryptionUtil::encryptWithBex(json_encode($vp));
     }
 }
