@@ -61,6 +61,8 @@
                             ticket["token"] = JSON.parse(data).token;
                             Bex.refresh(ticket);
                         }
+                        $('#button-confirm').removeAttr('disabled');
+                        $('.alert-info').remove();
 
                     }
                 });
