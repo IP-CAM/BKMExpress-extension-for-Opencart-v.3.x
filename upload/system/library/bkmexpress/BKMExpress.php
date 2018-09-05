@@ -138,7 +138,7 @@ class BKMExpress
         }
     }
 
-    public function nonce($merchantPrivateKey, $preProdMode, $merchantId, $data, $orderTotal, $orderStatus){
+    public function nonce($merchantPrivateKey, $preProdMode, $merchantId, $data, $orderTotal, $orderStatus, $inStock = True){
         $environment = ($preProdMode)?'PREPROD':'PRODUCTION';
         header('Content-type: application/json');
 
@@ -188,7 +188,7 @@ class BKMExpress
             $merchantService = new MerchantService($config);
             $merchantLoginResponse = $merchantService->login();
 
-            if($nonceRequest->getTotalAmount() != $orderTotal OR $orderStatus == False){
+            if($nonceRequest->getTotalAmount() != $orderTotal OR $orderStatus == False OR $inStock == False){
                 $merchantNonceResponse->setResult(false);
                 $merchantNonceResponse->setNonce($nonceRequest->getToken());
                 $merchantNonceResponse->setId($nonceRequest->getPath());
